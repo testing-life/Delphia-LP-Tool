@@ -1,28 +1,37 @@
 import React, { ChangeEvent, ChangeEventHandler, FC, ReactNode } from "react";
+import "./Input.css";
 
-interface IInputField {
+export interface InputFieldProps {
   children: ReactNode | string;
   type: "text" | "number" | "password";
   value?: string | number;
+  error?: string;
+  disabled?: boolean;
+  placeholder?: string;
   changeHandler: (e: string | number) => void;
 }
 
-const InputField: FC<IInputField> = ({
+const InputField: FC<InputFieldProps> = ({
   children,
   type,
   value,
+  error,
+  disabled,
+  placeholder,
   changeHandler,
-  ...args
 }) => {
   return (
-    <label className="text-sm font-medium text-gray-900 block mb-2">
-      {children}
+    <label className="input">
+      <span className="input__label">{children}</span>
       <input
         type={type}
         value={value}
-        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        disabled={disabled}
+        placeholder={placeholder}
+        className="input__field"
         onChange={(event) => changeHandler(event.target.value)}
       />
+      {error && <span>{error}</span>}
     </label>
   );
 };

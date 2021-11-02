@@ -19,6 +19,7 @@ module.exports = {
       disabled: ["hover"],
       backgroundColor: ["active"],
       textColor: ["active"],
+      borderWidth: ["hover"],
     },
   },
   plugins: [],
