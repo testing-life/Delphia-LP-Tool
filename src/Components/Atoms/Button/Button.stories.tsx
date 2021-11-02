@@ -20,14 +20,23 @@ Secondary.args = {
   variant: "secondary",
 };
 
-// export const Large = Template.bind({});
-// Large.args = {
-//   size: "large",
-//   label: "Button",
-// };
+export const Disabled = Template.bind({});
+Disabled.args = {
+  children: "i'm disabled",
+  variant: "primary",
+  disabled: true,
+};
 
-// export const Small = Template.bind({});
-// Small.args = {
-//   size: "small",
-//   label: "Button",
-// };
+export const Small = Template.bind({});
+Small.args = {
+  size: "xs",
+  children: "i'm small",
+  variant: "primary",
+};
+
+export const Largest = Template.bind({});
+Largest.args = {
+  size: "xl",
+  children: "i'm largest",
+  variant: "primary",
+};
