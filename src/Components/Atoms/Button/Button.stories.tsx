@@ -11,18 +11,18 @@ const Template: Story<ButtonProps> = (args) => <Button {...args} />;
 export const Primary = Template.bind({});
 Primary.args = {
   variant: "primary",
-  children: "Is a button",
+  children: "I'm a button",
 };
 
 export const Secondary = Template.bind({});
 Secondary.args = {
-  children: "Is an outline button",
+  children: "I'm an outline button",
   variant: "secondary",
 };
 
 export const Disabled = Template.bind({});
 Disabled.args = {
-  children: "i'm disabled",
+  children: "I'm disabled",
   variant: "primary",
   disabled: true,
 };
@@ -30,13 +30,13 @@ Disabled.args = {
 export const Small = Template.bind({});
 Small.args = {
   size: "xs",
-  children: "i'm small",
+  children: "I'm small",
   variant: "primary",
 };
 
 export const Largest = Template.bind({});
 Largest.args = {
   size: "xl",
-  children: "i'm largest",
+  children: "I'm largest",
   variant: "primary",
 };
