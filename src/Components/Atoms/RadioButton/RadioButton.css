@@ -1,0 +1,18 @@
+@layer components {
+  .radioButton {
+    @apply flex items-center;
+  }
+  .radioButton__input {
+    -webkit-appearance: none;
+    appearance: none;
+    @apply mr-2 border rounded-full border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
+  }
+
+  .radioButton__input:checked {
+    @apply bg-blue-600 border-0;
+  }
+
+  .radioButton__label {
+    @apply text-sm font-normal text-gray-500;
+  }
+}
