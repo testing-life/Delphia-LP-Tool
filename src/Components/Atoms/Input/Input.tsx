@@ -6,6 +6,7 @@ export interface InputFieldProps {
   type: "text" | "number" | "password";
   value?: string | number;
   error?: string;
+  name: string;
   disabled?: boolean;
   placeholder?: string;
   onChange: (e: string | number) => void;
@@ -18,6 +19,7 @@ const InputField: FC<InputFieldProps> = ({
   error,
   disabled,
   placeholder,
+  name,
   onChange,
 }) => {
   return (
@@ -27,6 +29,7 @@ const InputField: FC<InputFieldProps> = ({
         type={type}
         value={value}
         disabled={disabled}
+        name={name}
         inputMode={type === "number" ? "decimal" : "text"}
         placeholder={placeholder}
         className="input__field"
