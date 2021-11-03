@@ -8,7 +8,7 @@
     -webkit-appearance: none;
     appearance: none;
     border-radius: 4px;
-    @apply mr-2 border hover:cursor-pointer hover:border-blue-600 border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
+    @apply mr-2 border-2 hover:cursor-pointer hover:border-blue-700 border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
   }
 
   .checkboxButton__input:checked {
@@ -18,15 +18,14 @@
   .checkboxButton__label::before {
     content: "";
     display: none;
-    background: transparent;
     width: 10px;
     height: 5px;
-    position: absolute;
     left: 3px;
+    top: 8px;
+    transform: rotate(-45deg);
     border-left: 2px solid #fff;
     border-bottom: 2px solid #fff;
-    transform: rotate(-45deg);
-    top: 7px;
+    @apply bg-transparent absolute;
   }
 
   .checkboxButton__input:checked + .checkboxButton__label::before {
@@ -34,7 +33,11 @@
   }
 
   .checkboxButton__label {
-    @apply text-sm font-normal text-gray-500 hover:cursor-pointer;
+    @apply text-base font-normal text-gray-900 hover:cursor-pointer;
+  }
+
+  .checkboxButton__input[disabled] {
+    @apply border-gray-300;
   }
 
   .checkboxButton__input[disabled],
