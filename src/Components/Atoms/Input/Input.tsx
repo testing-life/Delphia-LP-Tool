@@ -8,7 +8,7 @@ export interface InputFieldProps {
   error?: string;
   disabled?: boolean;
   placeholder?: string;
-  changeHandler: (e: string | number) => void;
+  onChange: (e: string | number) => void;
 }
 
 const InputField: FC<InputFieldProps> = ({
@@ -18,18 +18,19 @@ const InputField: FC<InputFieldProps> = ({
   error,
   disabled,
   placeholder,
-  changeHandler,
+  onChange,
 }) => {
   return (
-    <label className="input">
+    <label className={`input ${error ? "input__validation--error" : ""}`}>
       <span className="input__label">{children}</span>
       <input
         type={type}
         value={value}
         disabled={disabled}
+        inputMode={type === "number" ? "decimal" : "text"}
         placeholder={placeholder}
         className="input__field"
-        onChange={(event) => changeHandler(event.target.value)}
+        onChange={(event) => onChange(event.target.value)}
       />
       {error && <span>{error}</span>}
     </label>

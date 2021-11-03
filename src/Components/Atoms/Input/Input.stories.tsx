@@ -12,7 +12,7 @@ export const TextInputField = Template.bind({});
 TextInputField.args = {
   children: "I'm an input",
   placeholder: "placeholder",
-  changeHandler: (val) => console.log(`val`, val),
+  onChange: (val) => console.log(`val`, val),
 };
 
 export const DisabledTextInputField = Template.bind({});
@@ -20,32 +20,29 @@ DisabledTextInputField.args = {
   children: "I'm an input",
   placeholder: "placeholder",
   disabled: true,
-  changeHandler: (val) => console.log(`val`, val),
+  onChange: (val) => console.log(`val`, val),
 };
 
-// export const Secondary = Template.bind({});
-// Secondary.args = {
-//   children: "I'm an outline button",
-//   variant: "secondary",
-// };
+export const ErroredTextInputField = Template.bind({});
+ErroredTextInputField.args = {
+  children: "I'm an input",
+  placeholder: "placeholder",
+  error: "I am an error message",
+  onChange: (val) => console.log(`val`, val),
+};
 
-// export const Disabled = Template.bind({});
-// Disabled.args = {
-//   children: "I'm disabled",
-//   variant: "primary",
-//   disabled: true,
-// };
+export const NumberInputField = Template.bind({});
+NumberInputField.args = {
+  children: "I'm a number input",
+  placeholder: "placeholder",
+  type: "number",
+  onChange: (val) => console.log(`val`, val),
+};
 
-// export const Small = Template.bind({});
-// Small.args = {
-//   size: "xs",
-//   children: "I'm small",
-//   variant: "primary",
-// };
-
-// export const Largest = Template.bind({});
-// Largest.args = {
-//   size: "xl",
-//   children: "I'm largest",
-//   variant: "primary",
-// };
+export const PasswordInputField = Template.bind({});
+PasswordInputField.args = {
+  children: "I'm a password input",
+  placeholder: "placeholder",
+  type: "password",
+  onChange: (val) => console.log(`val`, val),
+};
