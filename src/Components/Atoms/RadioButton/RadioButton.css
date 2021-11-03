@@ -1,15 +1,35 @@
 @layer components {
   .radioButton {
+    position: relative;
     @apply flex items-center;
   }
+
   .radioButton__input {
     -webkit-appearance: none;
     appearance: none;
-    @apply mr-2 border rounded-full border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
+    @apply mr-2 border rounded-full hover:border-blue-600 border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
   }
 
   .radioButton__input:checked {
     @apply bg-blue-600 border-0;
+  }
+
+  .radioButton__label::before {
+    content: "";
+    display: none;
+    background: transparent;
+    width: 10px;
+    height: 5px;
+    position: absolute;
+    left: 3px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg);
+    top: 7px;
+  }
+
+  .radioButton__input:checked + .radioButton__label::before {
+    display: inline-block;
   }
 
   .radioButton__label {
