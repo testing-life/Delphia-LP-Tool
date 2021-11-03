@@ -4,18 +4,6 @@ import { Story, Meta } from "@storybook/react";
 export default {
   title: "Atoms/RadioButton",
   component: RadioButton,
-  decorators: [
-    (Story) => (
-      <ul>
-        <li>
-          <Story />
-        </li>
-        <li>
-          <Story />
-        </li>
-      </ul>
-    ),
-  ],
 } as Meta;
 
 const Template: Story<RadioButtonProps> = (args) => <RadioButton {...args} />;
@@ -25,5 +13,14 @@ DefaultRadioButton.args = {
   children: "I am a radio label",
   name: "option group",
   value: "option 1",
+  onChange: (val) => console.log(`val`, val),
+};
+
+export const DisabledRadioButton = Template.bind({});
+DisabledRadioButton.args = {
+  children: "I am a disabled radio label",
+  name: "disableGroup",
+  value: "option 2",
+  disabled: true,
   onChange: (val) => console.log(`val`, val),
 };

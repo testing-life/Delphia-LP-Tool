@@ -1,20 +1,21 @@
 @layer components {
-  .radioButton {
+  .checkboxButton {
     position: relative;
     @apply flex items-center;
   }
 
-  .radioButton__input {
+  .checkboxButton__input {
     -webkit-appearance: none;
     appearance: none;
-    @apply mr-2 border hover:cursor-pointer rounded-full hover:border-blue-600 border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
+    border-radius: 4px;
+    @apply mr-2 border hover:cursor-pointer hover:border-blue-600 border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
   }
 
-  .radioButton__input:checked {
+  .checkboxButton__input:checked {
     @apply bg-blue-600 border-0;
   }
 
-  .radioButton__label::before {
+  .checkboxButton__label::before {
     content: "";
     display: none;
     background: transparent;
@@ -28,16 +29,16 @@
     top: 7px;
   }
 
-  .radioButton__input:checked + .radioButton__label::before {
+  .checkboxButton__input:checked + .checkboxButton__label::before {
     display: inline-block;
   }
 
-  .radioButton__label {
+  .checkboxButton__label {
     @apply text-sm font-normal text-gray-500 hover:cursor-pointer;
   }
 
-  .radioButton__input[disabled],
-  .radioButton__input[disabled] + .radioButton__label {
+  .checkboxButton__input[disabled],
+  .checkboxButton__input[disabled] + .checkboxButton__label {
     @apply hover:cursor-default;
   }
 }
