@@ -1,0 +1,47 @@
+@layer components {
+  .checkboxButton {
+    position: relative;
+    @apply flex items-center;
+  }
+
+  .checkboxButton__input {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 4px;
+    @apply mr-2 border-2 hover:cursor-pointer hover:border-blue-700 border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-200;
+  }
+
+  .checkboxButton__input:checked {
+    @apply bg-blue-600 border-0;
+  }
+
+  .checkboxButton__label::before {
+    content: "";
+    display: none;
+    width: 10px;
+    height: 5px;
+    left: 3px;
+    top: 8px;
+    transform: rotate(-45deg);
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    @apply bg-transparent absolute;
+  }
+
+  .checkboxButton__input:checked + .checkboxButton__label::before {
+    display: inline-block;
+  }
+
+  .checkboxButton__label {
+    @apply text-base font-normal text-gray-900 hover:cursor-pointer;
+  }
+
+  .checkboxButton__input[disabled] {
+    @apply border-gray-300;
+  }
+
+  .checkboxButton__input[disabled],
+  .checkboxButton__input[disabled] + .checkboxButton__label {
+    @apply hover:cursor-default;
+  }
+}
