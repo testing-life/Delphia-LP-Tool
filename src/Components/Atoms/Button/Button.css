@@ -1,0 +1,30 @@
+@layer components {
+  .primary {
+    @apply text-white bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-100 active:bg-blue-800 font-medium rounded-lg text-base py-2.5 px-5 text-center;
+  }
+
+  .secondary {
+    @apply text-blue-600 bg-white border-blue-700 border-solid border hover:bg-blue-50 focus:text-blue-600 active:text-white active:bg-blue-800 font-medium rounded-lg text-base py-2.5 px-5 text-center;
+  }
+
+  .xs {
+    @apply text-xs py-2 px-3;
+  }
+
+  .sm {
+    @apply text-sm py-2 px-3;
+  }
+
+  .lg {
+    @apply text-lg py-3 px-5;
+  }
+
+  .xl {
+    @apply text-xl py-4 px-6;
+  }
+
+  .primary[disabled],
+  .secondary[disabled] {
+    @apply text-gray-500 bg-gray-100 hover:cursor-default border-0;
+  }
+}
