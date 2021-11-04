@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 import { AuthContext, useAuth } from "../../Context/auth.context";
-import Button from "../Atoms/Button";
+import Button from "../Atoms/Button/Button";
 import Form from "../Atoms/Form";
-import InputField from "../Atoms/Input";
+import InputField from "../Atoms/Input/Input";
 
 const LoginForm: FC<any> = () => {
-  const { login } = useAuth() as AuthContext;
+  const { login } = useAuth();
 
   const onSubmit = (e: any) => {
     e.preventDefault();
@@ -22,17 +22,23 @@ const LoginForm: FC<any> = () => {
       <Form submitHandler={(e) => onSubmit(e)}>
         <ul>
           <li className="mb-6">
-            <InputField changeHandler={(e) => onChange(e)} type="text">
+            <InputField name="email" onChange={(e) => onChange(e)} type="text">
               Email
             </InputField>
           </li>
           <li className="mb-6">
-            <InputField changeHandler={(e) => onChange(e)} type="text">
+            <InputField
+              name="password"
+              onChange={(e) => onChange(e)}
+              type="text"
+            >
               Password
             </InputField>
           </li>
           <li className="text-sm">
-            <Button type="submit">Log in</Button>
+            <Button variant="primary" type="submit">
+              Log in
+            </Button>
           </li>
         </ul>
       </Form>
