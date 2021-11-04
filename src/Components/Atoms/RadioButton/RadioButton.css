@@ -1,0 +1,43 @@
+@layer components {
+  .radioButton {
+    position: relative;
+    @apply flex items-center;
+  }
+
+  .radioButton__input {
+    -webkit-appearance: none;
+    appearance: none;
+    @apply mr-2 border-2 hover:cursor-pointer rounded-full hover:border-blue-700 border-gray-500 w-4 h-4 focus:ring-2 focus:ring-blue-300;
+  }
+  .radioButton__input:checked {
+    @apply bg-blue-600 border-0;
+  }
+
+  .radioButton__label {
+    @apply text-base font-normal text-gray-900 hover:cursor-pointer;
+  }
+
+  .radioButton__label::before {
+    content: "";
+    display: none;
+    box-shadow: 0 0 0 2px #fff;
+    @apply w-2 h-2 absolute left-1 top-2 rounded-full bg-transparent;
+  }
+
+  .radioButton__input:checked + .radioButton__label::before {
+    display: inline-block;
+  }
+
+  .radioButton__input[disabled] {
+    @apply border-gray-300;
+  }
+
+  .radioButton__input[disabled],
+  .radioButton__input[disabled] + .radioButton__label {
+    @apply hover:cursor-default;
+  }
+
+  .radioButton__input[disabled] + .radioButton__label::before {
+    display: none;
+  }
+}
