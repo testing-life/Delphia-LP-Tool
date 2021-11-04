@@ -4,37 +4,37 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/Fonts/Inter-Light.ttf");
+  src: url("./Fonts/Inter-Light.ttf");
   font-weight: 300;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/Fonts/Inter-Regular.ttf");
+  src: url("./Fonts/Inter-Regular.ttf");
   font-weight: 400;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/Fonts/Inter-Medium.ttf");
+  src: url("./Fonts/Inter-Medium.ttf");
   font-weight: 500;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/Fonts/Inter-SemiBold.ttf");
+  src: url("./Fonts/Inter-SemiBold.ttf");
   font-weight: 600;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/Fonts/Inter-Bold.ttf");
+  src: url("./Fonts/Inter-Bold.ttf");
   font-weight: 700;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../public/Fonts/Inter-ExtraBold.ttf");
+  src: url("./Fonts/Inter-ExtraBold.ttf");
   font-weight: 800;
 }
 

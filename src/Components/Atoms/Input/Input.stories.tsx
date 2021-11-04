@@ -1,3 +1,4 @@
+import React from "react";
 import Input, { InputFieldProps } from "./Input";
 import { Story, Meta } from "@storybook/react";
 
