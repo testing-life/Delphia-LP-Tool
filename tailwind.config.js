@@ -3,6 +3,9 @@ module.exports = {
   darkMode: "media", // or 'media' or 'class'
   theme: {
     extend: {
+      fontFamily: {
+        inter: ["Inter", "ui-sans-serif"],
+      },
       colors: {
         turquoise: "#40e0d0",
         yellow: {
