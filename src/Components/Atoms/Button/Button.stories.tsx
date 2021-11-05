@@ -40,3 +40,10 @@ Largest.args = {
   children: "I'm largest",
   variant: "primary",
 };
+
+export const FullWidth = Template.bind({});
+FullWidth.args = {
+  children: "I'm longest",
+  variant: "primary",
+  fullWidth: true,
+};
