@@ -4,11 +4,12 @@ import "./Button.css";
 export interface ButtonProps {
   clickHandler?: () => void;
   children: ReactNode | string;
-  variant: "primary" | "secondary";
+  variant: "primary" | "secondary" | "textOnly";
   type?: "button" | "submit" | "reset";
   size?: "xs" | "sm" | "base" | "lg" | "xl";
   disabled?: boolean;
   loading?: boolean;
+  fullWidth?: boolean;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -19,10 +20,11 @@ const Button: FC<ButtonProps> = ({
   size = "base",
   disabled = false,
   loading = false,
+  fullWidth,
 }) => (
   <button
     disabled={disabled}
-    className={`${variant} ${size}`}
+    className={`${variant} ${size} ${fullWidth ? "w-full" : ""}`}
     type={type}
     onClick={clickHandler}
   >
