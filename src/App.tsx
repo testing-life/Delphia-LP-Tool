@@ -1,6 +1,9 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import Tabs from "./Components/Molecules/Tabs/Tabs";
+import Tab from "./Components/Molecules/Tab/Tab";
+import TabsNav from "./Components/Molecules/TabsNav/TabsNav";
 
 function App() {
   return (
@@ -16,6 +19,12 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
+          <Tabs>
+            <TabsNav labels={["labels1", "label"]} />
+            <Tab>tab1</Tab>
+            <Tab>tab2</Tab>
+            <Tab>tab3</Tab>
+          </Tabs>
           Learn React
         </a>
       </header>
