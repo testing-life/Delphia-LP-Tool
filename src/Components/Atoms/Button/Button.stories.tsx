@@ -4,6 +4,13 @@ import { Story, Meta } from "@storybook/react";
 export default {
   title: "Atoms/Button",
   component: Button,
+  argTypes: {
+    fullWidth: {
+      name: "Full width",
+      type: { fullWidth: "boolean", required: false },
+      defaultValue: false,
+    },
+  },
 } as Meta;
 
 const Template: Story<ButtonProps> = (args) => <Button {...args} />;
@@ -46,4 +53,10 @@ FullWidth.args = {
   children: "I'm longest",
   variant: "primary",
   fullWidth: true,
+};
+
+export const TextOnly = Template.bind({});
+TextOnly.args = {
+  children: "I'm text only",
+  variant: "textOnly",
 };
