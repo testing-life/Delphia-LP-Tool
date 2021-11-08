@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useState, MouseEvent } from "react";
 import TabsNav from "../TabsNav/TabsNav";
 import "./Tabs.css";
 
-interface TabsProps {
+export interface TabsProps {
   children: ReactNode[];
   labels: string[];
 }
