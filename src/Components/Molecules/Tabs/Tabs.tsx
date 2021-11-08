@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, useState } from "react";
+import Tab from "../Tab/Tab";
 import TabsNav from "../TabsNav/TabsNav";
 
 interface TabsProps {
@@ -7,11 +8,17 @@ interface TabsProps {
 
 const Tabs: FC<TabsProps> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
+  const tabCHangeHandler = (index: number, event: any) => {
+    event.preventDefault();
+    setActiveTab(index);
+  };
   return (
     <div>
-      {/* take array of labels to generate buttosn from ? */}
-      <TabsNav labels={["labels1", "label"]}></TabsNav>
-      <Tabs>{children}</Tabs>
+      <TabsNav
+        onClick={tabCHangeHandler}
+        labels={["labels1", "label"]}
+      ></TabsNav>
+      {children.map((child, index) => activeTab === index && child)}
     </div>
   );
 };

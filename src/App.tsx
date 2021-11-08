@@ -20,7 +20,6 @@ function App() {
           rel="noopener noreferrer"
         >
           <Tabs>
-            <TabsNav labels={["labels1", "label"]} />
             <Tab>tab1</Tab>
             <Tab>tab2</Tab>
             <Tab>tab3</Tab>
