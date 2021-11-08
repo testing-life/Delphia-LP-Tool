@@ -1,13 +1,13 @@
 import React, { FC, ReactNode, useState, MouseEvent } from "react";
-import Tab from "../Tab/Tab";
 import TabsNav from "../TabsNav/TabsNav";
+import "./Tabs.css";
 
 interface TabsProps {
   children: ReactNode[];
-  labels: string[]
+  labels: string[];
 }
 
-const Tabs: FC<TabsProps> = ({ children , labels}) => {
+const Tabs: FC<TabsProps> = ({ children, labels }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const tabCHangeHandler = (
     index: number,
@@ -17,13 +17,14 @@ const Tabs: FC<TabsProps> = ({ children , labels}) => {
     setActiveTab(index);
   };
   return (
-    <>
+    <div className="tabs">
       <TabsNav
         onClick={tabCHangeHandler}
         labels={labels}
+        activeTab={activeTab}
       ></TabsNav>
       {children && children.map((child, index) => activeTab === index && child)}
-    </>
+    </div>
   );
 };
 

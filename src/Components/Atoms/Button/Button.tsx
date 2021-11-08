@@ -1,8 +1,8 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, MouseEvent } from "react";
 import "./Button.css";
 
 export interface ButtonProps {
-  clickHandler?: () => void;
+  clickHandler?: (event: MouseEvent<HTMLButtonElement>) => void;
   children: ReactNode | string;
   variant: "primary" | "secondary" | "textOnly";
   type?: "button" | "submit" | "reset";
