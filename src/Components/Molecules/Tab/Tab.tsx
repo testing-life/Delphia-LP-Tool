@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
 import "./Tab.css";
 
-const Tab: FC<any> = ({ children }) => {
+const Tab: FC<ReactNode> = ({ children }) => {
   return <div>{children}</div>;
 };
 

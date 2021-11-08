@@ -19,13 +19,13 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Tabs>
-            <Tab>tab1</Tab>
-            <Tab>tab2</Tab>
-            <Tab>tab3</Tab>
-          </Tabs>
           Learn React
         </a>
+        <Tabs labels={["labels1", "label", "label3"]}>
+          <Tab>tab1</Tab>
+          <Tab>tab2</Tab>
+          <Tab>tab3</Tab>
+        </Tabs>
       </header>
     </div>
   );

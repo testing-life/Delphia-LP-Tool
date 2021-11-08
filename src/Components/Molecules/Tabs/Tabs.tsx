@@ -1,25 +1,29 @@
-import React, { FC, ReactNode, useState } from "react";
+import React, { FC, ReactNode, useState, MouseEvent } from "react";
 import Tab from "../Tab/Tab";
 import TabsNav from "../TabsNav/TabsNav";
 
 interface TabsProps {
   children: ReactNode[];
+  labels: string[]
 }
 
-const Tabs: FC<TabsProps> = ({ children }) => {
+const Tabs: FC<TabsProps> = ({ children , labels}) => {
   const [activeTab, setActiveTab] = useState<number>(0);
-  const tabCHangeHandler = (index: number, event: any) => {
+  const tabCHangeHandler = (
+    index: number,
+    event: MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
     setActiveTab(index);
   };
   return (
-    <div>
+    <>
       <TabsNav
         onClick={tabCHangeHandler}
-        labels={["labels1", "label"]}
+        labels={labels}
       ></TabsNav>
-      {children.map((child, index) => activeTab === index && child)}
-    </div>
+      {children && children.map((child, index) => activeTab === index && child)}
+    </>
   );
 };
 
