@@ -16,6 +16,7 @@ const MaxCurrencyInput: FC<MaxCurrencyInputProps> = ({
   maxValue,
   value,
   name,
+  disabled = false,
   onChange,
 }) => {
   const [state, setState] = useState<string>(value);
@@ -40,12 +41,18 @@ const MaxCurrencyInput: FC<MaxCurrencyInputProps> = ({
     <div className="maxCurrencyInput">
       <Input
         value={state}
+        disabled={disabled}
         type="text"
         name={name}
         placeholder="0.0"
         onChange={validateInput}
       />
-      <Button variant="primary" size="sm" onClick={maximiseValue}>
+      <Button
+        disabled={disabled}
+        variant="primary"
+        size="sm"
+        onClick={maximiseValue}
+      >
         Max
       </Button>
     </div>
