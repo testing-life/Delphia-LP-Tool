@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import MaxCurrencyInput from "./Components/Molecules/MaxCurrencyInput/MaxCurrencyInput";
 
 function App() {
   return (
@@ -18,6 +19,12 @@ function App() {
         >
           Learn React
         </a>
+        <MaxCurrencyInput
+          onChange={(e) => console.log(`e in app tsx`, e)}
+          type="number"
+          maxValue={0.666}
+          name={"this be monies"}
+        />
       </header>
     </div>
   );
