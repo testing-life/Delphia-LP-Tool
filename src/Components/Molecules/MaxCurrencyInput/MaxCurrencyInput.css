@@ -1,14 +1,11 @@
 @layer components {
   .maxCurrencyInput {
-    @apply grid;
-  }
-
-  .maxCurrencyInput .input,
-  .maxCurrencyInput .btn {
-    grid-area: 1/2;
+    @apply block relative;
   }
 
   .maxCurrencyInput .btn {
-    @apply mr-1.5 self-center justify-self-end;
+    @apply absolute;
+    top: 4px;
+    right: 3px;
   }
 }
