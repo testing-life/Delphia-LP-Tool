@@ -1,12 +1,23 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import Tabs from "./Components/Molecules/Tabs/Tabs";
-import Tab from "./Components/Molecules/Tab/Tab";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./Components/Atoms/ProtectedRoute";
+import DashboardPage from "./Pages/Dashboard/Dashboard.page";
+import LoginPage from "./Pages/Login/Login.page";
 
 
 function App() {
-  return <div className="App"></div>;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />}></Route>
+        <Route
+          path="/"
+          element={<ProtectedRoute>{<DashboardPage />}</ProtectedRoute>}
+        ></Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

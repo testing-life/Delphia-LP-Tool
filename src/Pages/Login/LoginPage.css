@@ -1,0 +1,5 @@
+@layer components {
+  .loginPage {
+    @apply bg-gray-800 flex h-screen justify-center items-start pt-28;
+  }
+}
