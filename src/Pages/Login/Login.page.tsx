@@ -2,11 +2,13 @@ import React, { FC, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Card from "../../Components/Atoms/Card/Card";
 import LoginForm from "../../Components/Login/LoginForm";
+import { useAuth } from "../../Context/auth.context";
 import { useUser } from "../../Context/user.context";
 import "./LoginPage.css";
 
 const LoginPage: FC = () => {
   const user = useUser();
+  const { authError } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
@@ -23,6 +25,12 @@ const LoginPage: FC = () => {
         <h1 className="text-3xl font-semibold text-gray-900 mb-10 text-center">
           Log In
         </h1>
+        {console.log(`authError`, authError)}
+        {authError && (
+          <p className="text-red-600 text-sm text-center mb-10">
+            {authError.message}
+          </p>
+        )}
         <LoginForm />
       </Card>
     </div>
