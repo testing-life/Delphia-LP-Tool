@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { AuthContext, useAuth } from "../../Context/auth.context";
 import Button from "../Atoms/Button/Button";
-import Form from "../Atoms/Form";
+import Form from "../Atoms/Form/Form";
 import InputField from "../Atoms/Input/Input";
 
 const LoginForm: FC<any> = () => {
@@ -19,7 +19,7 @@ const LoginForm: FC<any> = () => {
 
   return (
     <div className="max-w-lg mx-auto">
-      <Form submitHandler={(e) => onSubmit(e)}>
+      <Form onSubmit={(e) => onSubmit(e)}>
         <ul>
           <li className="mb-6">
             <InputField name="email" onChange={(e) => onChange(e)} type="text">
