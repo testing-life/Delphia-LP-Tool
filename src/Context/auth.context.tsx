@@ -34,7 +34,7 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
     if (authError) {
       setAuthError(undefined);
     }
-    const testUserUrl = "httpsx://jsonplaceholder.typicode.com/users";
+    const testUserUrl = "https://jsonplaceholder.typicode.com/users";
     try {
       const res = await fetch(testUserUrl);
       const data = await res.json();
