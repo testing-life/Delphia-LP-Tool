@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 import Tab from "../Tab/Tab";
 
 export default {
-  title: "Molecules/Tabs",
+  title: "Organisms/Tabs",
   component: Tabs,
   subcomponents: { Tab },
   argTypes: {
