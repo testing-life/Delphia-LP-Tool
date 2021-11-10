@@ -3,7 +3,7 @@ import "./Input.css";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 
 export interface InputFieldProps {
-  children: ReactNode | string;
+  children?: ReactNode | string;
   type: "text" | "number" | "password";
   value?: string | number;
   error?: string;
@@ -25,7 +25,7 @@ const InputField: FC<InputFieldProps> = ({
 }) => {
   return (
     <label className={`input ${error ? "input__validation--error" : ""}`}>
-      <span className="input__label">{children}</span>
+      {children && <span className="input__label">{children}</span>}
       <input
         type={type}
         value={value}

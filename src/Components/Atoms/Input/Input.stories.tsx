@@ -47,3 +47,10 @@ PasswordInputField.args = {
   type: "password",
   onChange: (val) => console.log(`val`, val),
 };
+
+export const LabellessInputField = Template.bind({});
+LabellessInputField.args = {
+  placeholder: "placeholder",
+  type: "text",
+  onChange: (val) => console.log(`val`, val),
+};

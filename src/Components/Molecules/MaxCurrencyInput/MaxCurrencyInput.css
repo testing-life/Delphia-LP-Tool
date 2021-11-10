@@ -1,0 +1,14 @@
+@layer components {
+  .maxCurrencyInput {
+    @apply relative flex;
+  }
+
+  .maxCurrencyInput .input {
+    @apply w-full;
+  }
+
+  .maxCurrencyInput .btn {
+    @apply absolute self-center;
+    right: 3px;
+  }
+}

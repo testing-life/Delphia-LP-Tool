@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from "react";
 import "./Button.css";
 
 export interface ButtonProps {
-  clickHandler?: () => void;
+  onClick?: () => void;
   children: ReactNode | string;
   variant: "primary" | "secondary" | "textOnly";
   type?: "button" | "submit" | "reset";
@@ -13,7 +13,7 @@ export interface ButtonProps {
 }
 
 const Button: FC<ButtonProps> = ({
-  clickHandler,
+  onClick,
   type = "button",
   children,
   variant,
@@ -24,9 +24,9 @@ const Button: FC<ButtonProps> = ({
 }) => (
   <button
     disabled={disabled}
-    className={`${variant} ${size} ${fullWidth ? "w-full" : ""}`}
+    className={`btn ${variant} ${size} ${fullWidth ? "w-full" : ""}`}
     type={type}
-    onClick={clickHandler}
+    onClick={onClick}
   >
     {!loading && children}
     {loading && "loading icon"}
