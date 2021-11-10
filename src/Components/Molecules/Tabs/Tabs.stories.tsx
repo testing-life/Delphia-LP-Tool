@@ -5,6 +5,7 @@ import Tab from "../Tab/Tab";
 export default {
   title: "Molecules/Tabs",
   component: Tabs,
+  subcomponents: { Tab },
   argTypes: {
     labels: {
       name: "Labels",
