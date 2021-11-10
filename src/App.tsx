@@ -20,15 +20,6 @@ function App() {
           Learn React
         </a>
       </header>
-      <AvatarLink
-        imgSrc="https://upload.wikimedia.org/wikipedia/commons/b/be/Ecosia-like_logo.svg"
-        onClick={() => console.log(`navigate somewhere`)}
-      />
-      <AvatarLink
-        imgSrc="https://upload.wikimedia.org/wikipedia/commons/b/be/Ecosia-like_logo.svg"
-        onClick={() => console.log(`navigate somewhere`)}
-        size="large"
-      />
     </div>
   );
 }
