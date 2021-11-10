@@ -14,6 +14,9 @@ module.exports = {
           700: "#b48a01",
         },
       },
+      minWidth: {
+        xl: "36rem",
+      },
     },
   },
   variants: {

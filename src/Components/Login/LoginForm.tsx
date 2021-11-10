@@ -26,7 +26,7 @@ const LoginForm: FC<any> = () => {
               Email
             </InputField>
           </li>
-          <li className="mb-6">
+          <li className="mb-14">
             <InputField
               name="password"
               onChange={(e) => onChange(e)}
@@ -36,7 +36,7 @@ const LoginForm: FC<any> = () => {
             </InputField>
           </li>
           <li className="text-sm">
-            <Button variant="primary" type="submit">
+            <Button variant="primary" fullWidth type="submit">
               Log in
             </Button>
           </li>
