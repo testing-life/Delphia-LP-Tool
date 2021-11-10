@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, ReactElement, ReactNode } from "react";
+import React, { FC, ReactNode } from "react";
 import "./Tab.css";
 
 const Tab: FC<ReactNode> = ({ children }) => {

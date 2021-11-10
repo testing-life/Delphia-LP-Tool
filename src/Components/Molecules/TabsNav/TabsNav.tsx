@@ -16,16 +16,10 @@ const TabsNav: FC<TabsNavProps> = ({ labels, onClick, activeTab }) => {
           <Button
             key={`${index}${label}`}
             variant={activeTab === index ? "primary" : "textOnly"}
-            clickHandler={(event) => onClick(index, event)}
+            onClick={(event) => onClick(index, event)}
           >
             {label}
           </Button>
-          // <button
-          //   key={`${index}${label}`}
-          //   onClick={(event) => onClick(index, event)}
-          // >
-          //   {label}
-          // </button>
         ))}
     </ul>
   );

@@ -3,8 +3,7 @@ import MaxCurrencyInput, { MaxCurrencyInputProps } from "./MaxCurrencyInput";
 import { Story, Meta } from "@storybook/react";
 
 export default {
-  title: "Atoms/MaxCurrencyInput",
-  component: MaxCurrencyInput,
+  title: "Molecules/MaxCurrencyInput",
   argTypes: {
     value: {
       name: "Value",
