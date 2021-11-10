@@ -5,6 +5,7 @@ import ProtectedRoute from "./Components/Atoms/ProtectedRoute";
 import DashboardPage from "./Pages/Dashboard/Dashboard.page";
 import LoginPage from "./Pages/Login/Login.page";
 
+
 function App() {
   return (
     <BrowserRouter>

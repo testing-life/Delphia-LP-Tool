@@ -1,8 +1,9 @@
-import React, { ChangeEvent, ChangeEventHandler, FC, ReactNode } from "react";
+import React, { FC, ReactNode } from "react";
 import "./Input.css";
+import { ExclamationCircleIcon } from "@heroicons/react/solid";
 
 export interface InputFieldProps {
-  children: ReactNode | string;
+  children?: ReactNode | string;
   type: "text" | "number" | "password";
   value?: string | number;
   error?: string;
@@ -24,7 +25,7 @@ const InputField: FC<InputFieldProps> = ({
 }) => {
   return (
     <label className={`input ${error ? "input__validation--error" : ""}`}>
-      <span className="input__label">{children}</span>
+      {children && <span className="input__label">{children}</span>}
       <input
         type={type}
         value={value}
@@ -35,7 +36,12 @@ const InputField: FC<InputFieldProps> = ({
         className="input__field"
         onChange={(event) => onChange(event.target.value)}
       />
-      {error && <span>{error}</span>}
+      {error && (
+        <div className="input__validation">
+          <ExclamationCircleIcon className="h-4 w-4 mr-2 ml-3" />
+          <span>{error}</span>
+        </div>
+      )}
     </label>
   );
 };
