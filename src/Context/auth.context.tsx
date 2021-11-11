@@ -21,7 +21,6 @@ const AuthContext = createContext<AuthContext>(null!);
 
 const AuthProvider: FC<IAuthProvider> = (props) => {
   // check if token exists in localstorage
-  console.log(`props`, props);
   const [user, setUser] = useState<IUser>();
 
   if (false) {
