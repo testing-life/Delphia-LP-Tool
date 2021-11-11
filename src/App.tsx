@@ -4,13 +4,17 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./Components/Atoms/ProtectedRoute";
 import DashboardPage from "./Pages/Dashboard/Dashboard.page";
 import LoginPage from "./Pages/Login/Login.page";
-
+import CreatePasswordPage from "./Pages/CreatePassword/CreatePassword.page";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />}></Route>
+        <Route
+          path="/create-password/:userName"
+          element={<CreatePasswordPage />}
+        ></Route>
         <Route
           path="/"
           element={<ProtectedRoute>{<DashboardPage />}</ProtectedRoute>}
