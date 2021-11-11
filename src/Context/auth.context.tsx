@@ -4,13 +4,15 @@ import React, {
   useContext,
   useState,
   ReactNode,
+  useEffect,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import { IUser } from "./user.context";
 
 export type AuthContext = {
   login: () => void;
   logout: () => void;
-  user: any;
+  state: IUser | undefined;
 };
 
 interface IAuthProvider {
@@ -20,29 +22,45 @@ interface IAuthProvider {
 const AuthContext = createContext<AuthContext>(null!);
 
 const AuthProvider: FC<IAuthProvider> = (props) => {
-  // check if token exists in localstorage
-  console.log(`props`, props);
-  const [user, setUser] = useState<IUser>();
+  const [state, setState] = useState<IUser | undefined>();
+  const navigate = useNavigate();
 
-  if (false) {
-    return <p>still loading</p>;
-  }
+  useEffect(() => {
+    getLocalUser();
+  }, []);
 
+  const getLocalUser = async () => {
+    const locallyStoredUser = await localStorage.getItem("user");
+    if (locallyStoredUser) {
+      const localUser = JSON.parse(locallyStoredUser);
+      setState(localUser);
+    }
+  };
   const login = async () => {
     const testUserUrl = "https://jsonplaceholder.typicode.com/users";
     try {
       const res = await fetch(testUserUrl);
       const data = await res.json();
-      if (data) setUser(data[0]);
+      if (data) {
+        setState(data[0]);
+        localStorage.setItem("user", JSON.stringify(data[0]));
+      }
     } catch (error) {
       throw new Error("login error");
     }
   };
 
-  const logout = () => {};
+  const logout = () => {
+    localStorage.clear();
+    setState(undefined);
+    navigate("/", { replace: true });
+  };
 
-  return <AuthContext.Provider value={{ user, login, logout }} {...props} />;
+  return <AuthContext.Provider value={{ state, login, logout }} {...props} />;
 };
 
 const useAuth = () => useContext(AuthContext);
 export { AuthProvider, useAuth };
+function useNAvigate() {
+  throw new Error("Function not implemented.");
+}
