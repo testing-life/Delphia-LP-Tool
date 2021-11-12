@@ -10,7 +10,6 @@ const ErrorBoundaryFallback: FC = () => {
         <ExclamationCircleIcon className="h-10 w-10 mx-auto mb-5" />
         <p>A critical error occured. Please refresh the page.</p>
       </Card>
-      ;
     </div>
   );
 };

@@ -11,7 +11,7 @@ const LoginPage: FC = () => {
   const { authError } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-    const state = location.state as { from: Location };
+  const state = location.state as { from: Location };
   useEffect(() => {
     const from = state ? state.from.pathname : "/";
     if (user) {
@@ -20,21 +20,19 @@ const LoginPage: FC = () => {
   }, [user]);
 
   return (
-      <Card>
-    <div className="loginPage">
+    <Card>
+      <div className="loginPage">
         <h1 className="text-3xl font-semibold text-gray-900 mb-10 text-center">
           Log In
         </h1>
-        {console.log(`authError`, authError)}
         {authError && (
-            {authError.message}
           <p className="text-red-600 text-sm text-center mb-10">
+            {authError.message}
           </p>
         )}
         <LoginForm />
-    </div>
-      </Card>
+      </div>
+    </Card>
   );
 };
 export default LoginPage;
-
