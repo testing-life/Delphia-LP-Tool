@@ -1,20 +1,31 @@
-import React, { ChangeEvent, FC, useEffect, useMemo, useState } from "react";
+import React, {
+  ChangeEvent,
+  FC,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import useUrlQuery from "../../Context/Hooks/useUrlQuery";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
 import Form from "../Atoms/Form/Form";
 import InputField from "../Atoms/Input/Input";
 
-interface StateProps {
+export interface PasswordCreationStateProps {
   userName: string | undefined;
   password: string | undefined;
   invitationToken: string | undefined;
   repeatPassword: string | undefined;
 }
 
-const CreatePasswordForm: FC = () => {
+interface CreatePasswordFormProps {
+  onSubmit: (event: FormEvent, props: PasswordCreationStateProps) => void;
+}
+
+const CreatePasswordForm: FC<CreatePasswordFormProps> = ({ onSubmit }) => {
   let query = useUrlQuery();
-  const [state, setState] = useState<StateProps>({
+  const [state, setState] = useState<PasswordCreationStateProps>({
     userName: undefined,
     password: undefined,
     invitationToken: undefined,
@@ -33,11 +44,6 @@ const CreatePasswordForm: FC = () => {
     if (userName && invitationToken) {
       setState({ ...state, userName, invitationToken });
     }
-  };
-
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-    console.log(`args`, e);
   };
 
   const onPasswordChange = debounce((event: ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +69,7 @@ const CreatePasswordForm: FC = () => {
 
   return (
     <div className="max-w-lg mx-auto">
-      <Form onSubmit={(e) => onSubmit(e)}>
+      <Form onSubmit={(event) => onSubmit(event, state)}>
         {console.log(`state`, state)}
         <ul>
           <li className="mb-5">
