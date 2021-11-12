@@ -12,7 +12,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route
-          path="/create-password/:userName"
+          // path="/create-password?userName=thisbeemail@test.com&invitationToken=abc123"
+          path="/create-password"
           element={<CreatePasswordPage />}
         ></Route>
         <Route

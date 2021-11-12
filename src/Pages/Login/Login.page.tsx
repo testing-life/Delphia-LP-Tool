@@ -20,8 +20,8 @@ const LoginPage: FC = () => {
   }, [user]);
 
   return (
-    <Card>
-      <div className="loginPage">
+    <div className="loginPage">
+      <Card>
         <h1 className="text-3xl font-semibold text-gray-900 mb-10 text-center">
           Log In
         </h1>
@@ -31,8 +31,8 @@ const LoginPage: FC = () => {
           </p>
         )}
         <LoginForm />
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 };
 export default LoginPage;
