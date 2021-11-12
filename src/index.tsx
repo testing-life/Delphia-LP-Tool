@@ -4,14 +4,16 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import AppProviders from "./Context/app.context";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorBoundaryFallback from "./Components/Error/ErrorBoundaryFallback";
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}> */}
-    <AppProviders>
-      <App />
-    </AppProviders>
-    {/* </ErrorBoundary> */}
+    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+      <AppProviders>
+        <App />
+      </AppProviders>
+    </ErrorBoundary>
   </React.StrictMode>,
   document.getElementById("root")
 );
