@@ -1,0 +1,5 @@
+@layer components {
+  .errorBoundaryFallback {
+    @apply bg-gray-800 text-center text-red-600 flex h-screen justify-center items-start pt-28;
+  }
+}

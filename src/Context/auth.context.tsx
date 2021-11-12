@@ -11,6 +11,7 @@ export type AuthContext = {
   login: () => void;
   logout: () => void;
   user: any;
+  authError: Error | undefined;
 };
 
 interface IAuthProvider {
@@ -23,25 +24,36 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
   // check if token exists in localstorage
   console.log(`props`, props);
   const [user, setUser] = useState<IUser>();
+  const [authError, setAuthError] = useState<Error>();
 
   if (false) {
     return <p>still loading</p>;
   }
 
-  const login = async () => {
+  const login = async (): Promise<void> => {
+    if (authError) {
+      setAuthError(undefined);
+    }
     const testUserUrl = "https://jsonplaceholder.typicode.com/users";
     try {
       const res = await fetch(testUserUrl);
       const data = await res.json();
-      if (data) setUser(data[0]);
+      if (res.ok && data) {
+        setUser(data[0]);
+      }
     } catch (error) {
-      throw new Error("login error");
+      setAuthError({ message: "Im an auth error" } as Error);
     }
   };
 
   const logout = () => {};
 
-  return <AuthContext.Provider value={{ user, login, logout }} {...props} />;
+  return (
+    <AuthContext.Provider
+      value={{ authError, user, login, logout }}
+      {...props}
+    />
+  );
 };
 
 const useAuth = () => useContext(AuthContext);
