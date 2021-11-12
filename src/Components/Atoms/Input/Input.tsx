@@ -6,11 +6,11 @@ export interface InputFieldProps {
   children?: ReactNode | string;
   type: "text" | "number" | "password";
   value?: string | number;
-  error?: string;
+  error?: string | boolean;
   name: string;
   disabled?: boolean;
   placeholder?: string;
-  onChange: (e: ChangeEvent) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputField: FC<InputFieldProps> = ({
@@ -36,7 +36,7 @@ const InputField: FC<InputFieldProps> = ({
         className="input__field"
         onChange={(event) => onChange(event)}
       />
-      {error && (
+      {error && !!(error as string).length && (
         <div className="input__validation">
           <ExclamationCircleIcon className="h-4 w-4 mr-2 ml-3" />
           <span>{error}</span>

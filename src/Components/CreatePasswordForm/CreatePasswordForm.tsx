@@ -1,24 +1,27 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useMemo, useState } from "react";
 import useUrlQuery from "../../Context/Hooks/useUrlQuery";
+import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
 import Form from "../Atoms/Form/Form";
 import InputField from "../Atoms/Input/Input";
 
-interface FormStateProps {
+interface StateProps {
   userName: string | undefined;
   password: string | undefined;
   invitationToken: string | undefined;
+  repeatPassword: string | undefined;
 }
 
 const CreatePasswordForm: FC = () => {
   let query = useUrlQuery();
-  const [formState, setFormState] = useState<FormStateProps>({
+  const [state, setState] = useState<StateProps>({
     userName: undefined,
     password: undefined,
     invitationToken: undefined,
+    repeatPassword: undefined,
   });
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     setStateFromUrlQuery();
@@ -28,7 +31,7 @@ const CreatePasswordForm: FC = () => {
     const userName = query.get("userName");
     const invitationToken = query.get("invitationToken");
     if (userName && invitationToken) {
-      setFormState({ ...formState, userName, invitationToken });
+      setState({ ...state, userName, invitationToken });
     }
   };
 
@@ -37,27 +40,48 @@ const CreatePasswordForm: FC = () => {
     console.log(`args`, e);
   };
 
-  const isValidString = (value: string): boolean => !!value;
+  const onPasswordChange = debounce((event: ChangeEvent<HTMLInputElement>) => {
+    setState({ ...state, [event.target.name]: event.target.value });
+    if (state.repeatPassword && event.target.value !== state.repeatPassword) {
+      setError("Passwords do not match");
+    } else {
+      setError(undefined);
+    }
+  }, 500);
 
-  const onChange = (args: any) => {
-    console.log(`args`, args.target.name, args.target.value);
-  };
+  const onRepeatPasswordChange = debounce(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setState({ ...state, [event.target.name]: event.target.value });
+      if (state.password && event.target.value !== state.password) {
+        setError("Passwords do not match");
+      } else {
+        setError(undefined);
+      }
+    },
+    500
+  );
 
   return (
     <div className="max-w-lg mx-auto">
       <Form onSubmit={(e) => onSubmit(e)}>
-        {console.log(`formState`, formState)}
+        {console.log(`state`, state)}
         <ul>
           <li className="mb-5">
-            <InputField name="password" onChange={onChange} type="password">
+            <InputField
+              name="password"
+              error={!!error}
+              onChange={onPasswordChange}
+              type="password"
+            >
               Password
             </InputField>
           </li>
           <li className="mb-14">
             <InputField
               name="repeatPassword"
-              onChange={onChange}
+              onChange={onRepeatPasswordChange}
               type="password"
+              error={error}
             >
               Confirm Password
             </InputField>
