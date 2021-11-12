@@ -18,6 +18,8 @@ const CreatePasswordForm: FC = () => {
     invitationToken: undefined,
   });
 
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     setStateFromUrlQuery();
   }, []);
@@ -35,8 +37,10 @@ const CreatePasswordForm: FC = () => {
     console.log(`args`, e);
   };
 
+  const isValidString = (value: string): boolean => !!value;
+
   const onChange = (args: any) => {
-    console.log(`args`, args);
+    console.log(`args`, args.target.name, args.target.value);
   };
 
   return (
@@ -45,18 +49,14 @@ const CreatePasswordForm: FC = () => {
         {console.log(`formState`, formState)}
         <ul>
           <li className="mb-5">
-            <InputField
-              name="password"
-              onChange={(e) => onChange(e)}
-              type="password"
-            >
+            <InputField name="password" onChange={onChange} type="password">
               Password
             </InputField>
           </li>
           <li className="mb-14">
             <InputField
               name="repeatPassword"
-              onChange={(e) => onChange(e)}
+              onChange={onChange}
               type="password"
             >
               Confirm Password

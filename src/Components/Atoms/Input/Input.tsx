@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { ChangeEvent, FC, ReactNode } from "react";
 import "./Input.css";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 
@@ -10,7 +10,7 @@ export interface InputFieldProps {
   name: string;
   disabled?: boolean;
   placeholder?: string;
-  onChange: (e: string | number) => void;
+  onChange: (e: ChangeEvent) => void;
 }
 
 const InputField: FC<InputFieldProps> = ({
@@ -34,7 +34,7 @@ const InputField: FC<InputFieldProps> = ({
         inputMode={type === "number" ? "decimal" : "text"}
         placeholder={placeholder}
         className="input__field"
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => onChange(event)}
       />
       {error && (
         <div className="input__validation">
