@@ -45,7 +45,7 @@ const CreatePasswordForm: FC = () => {
               Password
             </InputField>
           </li>
-          <li className="text-sm mt-10">
+          <li className="text-sm">
             <Button variant="primary" fullWidth type="submit">
               Create Password
             </Button>
