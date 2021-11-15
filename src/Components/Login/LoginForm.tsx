@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { AuthContext, useAuth } from "../../Context/auth.context";
+import { useAuth } from "../../Context/auth.context";
 import Button from "../Atoms/Button/Button";
 import Form from "../Atoms/Form/Form";
 import InputField from "../Atoms/Input/Input";
