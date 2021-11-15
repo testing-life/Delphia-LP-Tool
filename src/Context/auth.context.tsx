@@ -31,7 +31,7 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
     getLocalUser();
   }, []);
 
-const getLocalUser = async () => {
+  const getLocalUser = async () => {
     const locallyStoredUser = await localStorage.getItem("user");
     if (locallyStoredUser) {
       const localUser = JSON.parse(locallyStoredUser);
@@ -43,7 +43,7 @@ const getLocalUser = async () => {
     if (authError) {
       setAuthError(undefined);
     }
-  
+
     const testUserUrl = "https://jsonplaceholder.typicode.com/users";
     try {
       const res = await fetch(testUserUrl);
@@ -73,6 +73,3 @@ const getLocalUser = async () => {
 
 const useAuth = () => useContext(AuthContext);
 export { AuthProvider, useAuth };
-function useNAvigate() {
-  throw new Error("Function not implemented.");
-}
