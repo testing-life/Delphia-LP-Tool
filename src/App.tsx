@@ -15,11 +15,7 @@ function App() {
         path="/"
         element={<ProtectedRoute>{<DashboardPage />}</ProtectedRoute>}
       ></Route>
-      <Route
-        // path="/create-password?userName=thisbeemail@test.com&invitationToken=abc123"
-        path="/create-password"
-        element={<CreatePasswordPage />}
-      ></Route>
+      <Route path="/create-password" element={<CreatePasswordPage />}></Route>
 
       <Route
         path="wallet-connect"
