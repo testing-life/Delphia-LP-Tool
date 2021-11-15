@@ -1,0 +1,21 @@
+@layer components {
+  .connectedWalletDetails {
+    @apply inline-flex items-center font-medium text-sm justify-center bg-gray-700 text-gray-300 py-2 pl-3 pr-0.5 rounded-lg gap-3;
+  }
+
+  .connectedWalletDetails__tokenDetails {
+    @apply uppercase;
+  }
+
+  .connectedWalletDetails__tokenDetails:not(:first-child) {
+    @apply border-l pl-3 border-gray-500;
+  }
+
+  .connectedWalletDetails__connectedAddress {
+    @apply rounded-md bg-white text-gray-900 -mt-2 -mb-2 py-1.5 px-2;
+  }
+
+  .connectedWalletDetails--hasError {
+    @apply bg-red-600;
+  }
+}

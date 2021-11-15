@@ -4,6 +4,7 @@ import AvatarLink from "../../Atoms/AvatarLink/AvatarLink";
 import IconButton from "../../Atoms/IconButton/IconButton";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { BrowserRouter } from "react-router-dom";
+import Button from "../../Atoms/Button/Button";
 
 export default {
   title: "Organisms/Navigation",
@@ -22,6 +23,7 @@ const Template: Story = (args) => (
       }
       rightAligned={
         <>
+          <Button variant="primary">Connect Wallet</Button>
           <IconButton onClick={() => {}}>
             <DotsVerticalIcon className="h-6 w-6 text-black" />
           </IconButton>
@@ -32,4 +34,4 @@ const Template: Story = (args) => (
   </BrowserRouter>
 );
 
-export const Default = Template.bind({});
+export const KitchenSink = Template.bind({});

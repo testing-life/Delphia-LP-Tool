@@ -3,6 +3,6 @@
     @apply flex justify-center  border-b border-gray-300;
   }
   .innerNav {
-    @apply flex justify-between max-w-screen-xl py-2 px-5 w-full;
+    @apply flex justify-between max-w-screen-xl py-2 px-5 w-full gap-3;
   }
 }
