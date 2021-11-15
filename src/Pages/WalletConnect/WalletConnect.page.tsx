@@ -4,6 +4,8 @@ import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useNavigate } from "react-router";
+import { Environments } from "../../Enums/environments";
+import { Networks } from "../../Enums/networks";
 
 const WalletConnectPage = () => {
   const navigate = useNavigate();
@@ -20,8 +22,12 @@ const WalletConnectPage = () => {
         },
       },
     };
+
     const web3Modal = new Web3Modal({
-      network: "mainnet",
+      network:
+        process.env.NODE_ENV === Environments.PROD
+          ? Networks.MAINNET
+          : Networks.RINKEBY,
       cacheProvider: true,
       providerOptions,
     });
