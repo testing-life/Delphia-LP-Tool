@@ -12,16 +12,17 @@ const LoginPage: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { from: Location };
+  const web3 = null; // this will come from a global web3 provider
   useEffect(() => {
     const from = state ? state.from.pathname : "/";
-    if (user) {
-      navigate(from, { replace: true });
+    if (user && !web3) {
+      navigate("/wallet-connect", { replace: true });
     }
   }, [user]);
 
   return (
-    <Card>
-      <div className="loginPage">
+    <div className="loginPage">
+      <Card>
         <h1 className="text-3xl font-semibold text-gray-900 mb-10 text-center">
           Log In
         </h1>
@@ -31,8 +32,8 @@ const LoginPage: FC = () => {
           </p>
         )}
         <LoginForm />
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 };
 export default LoginPage;

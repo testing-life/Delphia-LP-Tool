@@ -5,15 +5,18 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import AppProviders from "./Context/app.context";
 import { ErrorBoundary } from "react-error-boundary";
+import { BrowserRouter } from "react-router-dom";
 import ErrorBoundaryFallback from "./Components/Error/ErrorBoundaryFallback";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-      <AppProviders>
-        <App />
-      </AppProviders>
-    </ErrorBoundary>
+    <BrowserRouter>
+      <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+        <AppProviders>
+          <App />
+        </AppProviders>
+      </ErrorBoundary>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );

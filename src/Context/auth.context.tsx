@@ -4,13 +4,15 @@ import React, {
   useContext,
   useState,
   ReactNode,
+  useEffect,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import { IUser } from "./user.context";
 
 export type AuthContext = {
   login: () => void;
   logout: () => void;
-  user: any;
+  state: IUser | undefined;
   authError: Error | undefined;
 };
 
@@ -21,35 +23,49 @@ interface IAuthProvider {
 const AuthContext = createContext<AuthContext>(null!);
 
 const AuthProvider: FC<IAuthProvider> = (props) => {
-  // check if token exists in localstorage
-  const [user, setUser] = useState<IUser>();
+  const [state, setState] = useState<IUser | undefined>();
+  const navigate = useNavigate();
   const [authError, setAuthError] = useState<Error>();
 
-  if (false) {
-    return <p>still loading</p>;
-  }
+  useEffect(() => {
+    getLocalUser();
+  }, []);
+
+  const getLocalUser = async () => {
+    const locallyStoredUser = await localStorage.getItem("user");
+    if (locallyStoredUser) {
+      const localUser = JSON.parse(locallyStoredUser);
+      setState(localUser);
+    }
+  };
 
   const login = async (): Promise<void> => {
     if (authError) {
       setAuthError(undefined);
     }
+
     const testUserUrl = "https://jsonplaceholder.typicode.com/users";
     try {
       const res = await fetch(testUserUrl);
       const data = await res.json();
       if (res.ok && data) {
-        setUser(data[0]);
+        setState(data[0]);
+        localStorage.setItem("user", JSON.stringify(data[0]));
       }
     } catch (error) {
       setAuthError({ message: "Im an auth error" } as Error);
     }
   };
 
-  const logout = () => {};
+  const logout = () => {
+    localStorage.clear();
+    setState(undefined);
+    navigate("/", { replace: true });
+  };
 
   return (
     <AuthContext.Provider
-      value={{ authError, user, login, logout }}
+      value={{ authError, state, login, logout }}
       {...props}
     />
   );
