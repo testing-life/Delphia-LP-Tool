@@ -53,7 +53,7 @@ const CreatePasswordForm: FC<CreatePasswordFormProps> = ({ onSubmit }) => {
     } else {
       setError(undefined);
     }
-  }, 500);
+  }, 250);
 
   const onRepeatPasswordChange = debounce(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +64,7 @@ const CreatePasswordForm: FC<CreatePasswordFormProps> = ({ onSubmit }) => {
         setError(undefined);
       }
     },
-    500
+    250
   );
 
   return (

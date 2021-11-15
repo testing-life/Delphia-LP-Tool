@@ -4,6 +4,8 @@ import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./Components/Atoms/ProtectedRoute";
 import DashboardPage from "./Pages/Dashboard/Dashboard.page";
 import LoginPage from "./Pages/Login/Login.page";
+import CreatePasswordPage from "./Pages/CreatePassword/CreatePassword.page";
+import WalletConnectPage from "./Pages/WalletConnect/WalletConnect.page";
 
 function App() {
   return (
@@ -13,19 +15,17 @@ function App() {
         path="/"
         element={<ProtectedRoute>{<DashboardPage />}</ProtectedRoute>}
       ></Route>
-       <Route
-          // path="/create-password?userName=thisbeemail@test.com&invitationToken=abc123"
-          path="/create-password"
-          element={<CreatePasswordPage />}
-        ></Route>
-      
+      <Route
+        // path="/create-password?userName=thisbeemail@test.com&invitationToken=abc123"
+        path="/create-password"
+        element={<CreatePasswordPage />}
+      ></Route>
+
       <Route
         path="wallet-connect"
         element={<ProtectedRoute>{<WalletConnectPage />}</ProtectedRoute>}
       ></Route>
     </Routes>
-   
-       
   );
 }
 
