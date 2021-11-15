@@ -4,17 +4,16 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import AppProviders from "./Context/app.context";
-import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      {/* <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}> */}
+    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
       <AppProviders>
         <App />
       </AppProviders>
+    </ErrorBoundary>
     </BrowserRouter>
-    {/* </ErrorBoundary> */}
   </React.StrictMode>,
   document.getElementById("root")
 );
