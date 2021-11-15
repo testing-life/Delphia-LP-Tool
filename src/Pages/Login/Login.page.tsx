@@ -12,10 +12,11 @@ const LoginPage: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { from: Location };
+  const web3 = null; // this will come from a global web3 provider
   useEffect(() => {
     const from = state ? state.from.pathname : "/";
-    if (user) {
-      navigate(from, { replace: true });
+    if (user && !web3) {
+      navigate("/wallet-connect", { replace: true });
     }
   }, [user]);
 
