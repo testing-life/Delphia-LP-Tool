@@ -7,10 +7,13 @@ import isEmail from "validator/lib/isEmail";
 import isEmpty from "validator/lib/isEmpty";
 
 import "./CreatePasswordPage.css";
+import Button from "../../Components/Atoms/Button/Button";
+import { useNavigate } from "react-router";
 
 const CreatePasswordPage: FC = () => {
   const [error, setError] = useState<Error | null>(null);
   const [passCreated, setPassCreated] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const isPasswordCreationObjValid = (
     obj: PasswordCreationStateProps
@@ -37,11 +40,14 @@ const CreatePasswordPage: FC = () => {
     props: PasswordCreationStateProps
   ): Promise<void> => {
     event.preventDefault();
-    console.log(`event, props`, event, props);
     if (!isPasswordCreationObjValid(props)) {
       return;
     }
+    if (error) {
+      setError(null);
+    }
     try {
+      // test endpoint
       const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
         method: "POST",
         body: JSON.stringify({
@@ -63,23 +69,32 @@ const CreatePasswordPage: FC = () => {
   };
   return (
     <div className="createPasswordPage">
-      {!passCreated && (
-        <Card>
-          <h1 className="text-3xl font-semibold mb-5 text-center">
-            Create Password
-          </h1>
-          <p className="text-sm font-normal mb-10 text-center">
-            You’ve been invited to Delphia’s Limited Partner’s portal.
+      <Card>
+        <h1 className="text-3xl font-semibold mb-5 text-center">
+          {passCreated ? "Account Created" : "Create Password"}
+        </h1>
+        <p
+          className={`text-sm font-normal ${
+            passCreated ? "mb-10" : "mb-14"
+          } text-center`}
+        >
+          {passCreated
+            ? "Please log in again to access portal"
+            : "You’ve been invited to Delphia’s Limited Partner’s portal."}
+        </p>
+        {error && (
+          <p className="text-red-600 text-sm text-center mb-10">
+            {error.message}
           </p>
-          {error && (
-            <p className="text-red-600 text-sm text-center mb-10">
-              {error.message}
-            </p>
-          )}
-          <CreatePasswordForm onSubmit={onSubmitHandler} />
-        </Card>
-      )}
-      {passCreated && <Card>is Success</Card>}
+        )}
+        {passCreated && (
+          <Button variant="primary" fullWidth onClick={() => navigate("login")}>
+            Continue
+          </Button>
+        )}
+        {!passCreated && <CreatePasswordForm onSubmit={onSubmitHandler} />}
+      </Card>
+      )
     </div>
   );
 };
