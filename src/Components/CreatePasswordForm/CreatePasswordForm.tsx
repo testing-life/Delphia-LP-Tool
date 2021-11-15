@@ -70,7 +70,6 @@ const CreatePasswordForm: FC<CreatePasswordFormProps> = ({ onSubmit }) => {
   return (
     <div className="max-w-lg mx-auto">
       <Form onSubmit={(event) => onSubmit(event, state)}>
-        {console.log(`state`, state)}
         <ul>
           <li className="mb-5">
             <InputField

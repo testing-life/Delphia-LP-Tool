@@ -21,7 +21,7 @@ const CreatePasswordPage: FC = () => {
     const hasValues = Object.entries(obj).every((prop) => {
       const key = prop[0];
       const val = prop[1];
-      if (isEmpty(val)) {
+      if (!val || isEmpty(val)) {
         return false;
       }
 
@@ -88,7 +88,11 @@ const CreatePasswordPage: FC = () => {
           </p>
         )}
         {passCreated && (
-          <Button variant="primary" fullWidth onClick={() => navigate("login")}>
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={() => navigate("/login")}
+          >
             Continue
           </Button>
         )}
