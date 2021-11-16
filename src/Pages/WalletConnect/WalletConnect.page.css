@@ -20,4 +20,8 @@
     display: block;
     width: 100%;
   }
+
+  .walletconnect-modal__close__wrapper {
+    display: none;
+  }
 }
