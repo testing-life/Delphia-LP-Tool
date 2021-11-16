@@ -5,11 +5,12 @@ import IconButton from "../../Atoms/IconButton/IconButton";
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { BrowserRouter } from "react-router-dom";
 import Button from "../../Atoms/Button/Button";
+import ConnectedWalletDetails from "../../Molecules/ConnectedWalletDetails/ConnectedWalletDetails";
 
 export default {
   title: "Organisms/Navigation",
   component: Navigation,
-  subcomponents: { AvatarLink, IconButton },
+  subcomponents: { AvatarLink, IconButton, ConnectedWalletDetails },
 } as Meta;
 
 const Template: Story = (args) => (
@@ -23,6 +24,10 @@ const Template: Story = (args) => (
       }
       rightAligned={
         <>
+          <ConnectedWalletDetails
+            balances={{ SEC: 234, ETH: 323, CRD: 0.3242 }}
+            connectedAddress="0x1234...xx8f"
+          />
           <Button variant="primary">Connect Wallet</Button>
           <IconButton onClick={() => {}}>
             <DotsVerticalIcon className="h-6 w-6 text-black" />

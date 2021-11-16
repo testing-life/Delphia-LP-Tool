@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import "./ConnectedWalletDetails.css";
 
 export interface ConnectedWalletDetailsProps {
-  error: boolean;
+  error?: boolean;
   balances: { [key: string]: number };
   connectedAddress: string;
 }
