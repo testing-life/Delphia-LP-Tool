@@ -12,10 +12,15 @@ const TransactionStatusLink: FC<TransactionStatusLinkProps> = ({
   transactionCount,
 }) => {
   return (
-    <Link className="transactionStatusLink" to={path}>
+    <a
+      target="_blank"
+      className="transactionStatusLink"
+      rel="noreferrer noopener"
+      href={path}
+    >
       <span>{transactionCount} Pending</span>
       <ExternalLinkIcon className="w-5 h-5" />
-    </Link>
+    </a>
   );
 };
 
