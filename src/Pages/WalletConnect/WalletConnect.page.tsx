@@ -13,10 +13,10 @@ const WalletConnectPage = () => {
   const { setProvider, setSigner } = useEthProvider();
   const navigate = useNavigate();
   useEffect(() => {
-    wallettInit();
+    walletInit();
   }, []);
 
-  const wallettInit = async (): Promise<void> => {
+  const walletInit = async (): Promise<void> => {
     setReload(false);
     const providerOptions = {
       walletconnect: {
