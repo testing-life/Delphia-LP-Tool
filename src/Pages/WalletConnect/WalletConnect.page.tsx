@@ -8,12 +8,15 @@ import { Environments } from "../../Enums/environments";
 import { Networks } from "../../Enums/networks";
 
 const WalletConnectPage = () => {
+  const [reload, setReload] = useState<boolean>(false);
+
   const navigate = useNavigate();
   useEffect(() => {
     wallettInit();
   }, []);
 
   const wallettInit = async (): Promise<void> => {
+    setReload(false);
     const providerOptions = {
       walletconnect: {
         package: WalletConnectProvider,
@@ -28,18 +31,29 @@ const WalletConnectPage = () => {
         process.env.NODE_ENV === Environments.PROD
           ? Networks.MAINNET
           : Networks.RINKEBY,
-      cacheProvider: true,
+      cacheProvider: false,
       providerOptions,
     });
-    const provider = await web3Modal.connect();
+    const provider = await web3Modal.connect().catch(async (e) => {
+      console.warn("Reload to connect");
+      setReload(true);
+    });
     const web3 = new Web3(provider);
-    console.log(`web3`, web3);
-    if (web3) {
+
+    if (web3.currentProvider) {
       navigate("/");
     }
   };
 
-  return <div className="walletConnectPage"></div>;
+  return (
+    <div className="walletConnectPage">
+      {reload && (
+        <p className="text-white">
+          You must refresh the page and connect to proceed
+        </p>
+      )}
+    </div>
+  );
 };
 
 export default WalletConnectPage;
