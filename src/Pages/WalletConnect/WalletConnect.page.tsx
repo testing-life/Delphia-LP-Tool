@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./WalletConnect.page.css";
-import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useNavigate } from "react-router";
 import { Environments } from "../../Enums/environments";
 import { Networks } from "../../Enums/networks";
+import { ethers } from "ethers";
+import { useEthProvider } from "../../Context/web3.context";
 
 const WalletConnectPage = () => {
   const [reload, setReload] = useState<boolean>(false);
-
+  const { setProvider, setSigner } = useEthProvider();
   const navigate = useNavigate();
   useEffect(() => {
     wallettInit();
@@ -34,14 +35,19 @@ const WalletConnectPage = () => {
       cacheProvider: false,
       providerOptions,
     });
-    const provider = await web3Modal.connect().catch(async (e) => {
-      console.warn("Reload to connect");
-      setReload(true);
-    });
-    const web3 = new Web3(provider);
 
-    if (web3.currentProvider) {
-      navigate("/");
+    try {
+      const modalProvider = await web3Modal.connect();
+      const provider =
+        modalProvider && new ethers.providers.Web3Provider(modalProvider);
+      const ready = provider && (await provider.ready);
+      if (ready) {
+        setProvider(provider);
+        setSigner(provider.getSigner());
+        navigate("/");
+      }
+    } catch (error) {
+      setReload(true);
     }
   };
 

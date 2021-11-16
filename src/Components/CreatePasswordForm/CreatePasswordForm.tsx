@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import useUrlQuery from "../../Context/Hooks/useUrlQuery";
+import useUrlQuery from "../../Hooks/useUrlQuery";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
 import Form from "../Atoms/Form/Form";
