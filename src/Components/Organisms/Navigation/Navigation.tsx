@@ -9,7 +9,7 @@ const Navigation: FC<NavigationProps> = ({ leftAligned, rightAligned }) => {
     <header className="outerNav">
       <div className="innerNav">
         <div className="flex">{leftAligned}</div>
-        <div className="flex gap-3">{rightAligned}</div>
+        <div className="flex gap-3 items-center">{rightAligned}</div>
       </div>
     </header>
   );

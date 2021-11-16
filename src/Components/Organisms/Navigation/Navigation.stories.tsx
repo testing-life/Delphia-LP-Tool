@@ -6,6 +6,7 @@ import { DotsVerticalIcon } from "@heroicons/react/solid";
 import { BrowserRouter } from "react-router-dom";
 import Button from "../../Atoms/Button/Button";
 import ConnectedWalletDetails from "../../Molecules/ConnectedWalletDetails/ConnectedWalletDetails";
+import TransactionStatusLink from "../../Molecules/TransactionStatusLink/TransactionStatusLink";
 
 export default {
   title: "Organisms/Navigation",
@@ -24,6 +25,10 @@ const Template: Story = (args) => (
       }
       rightAligned={
         <>
+          <TransactionStatusLink
+            path="https://ecosia.org"
+            transactionCount={4}
+          />
           <ConnectedWalletDetails
             balances={{ SEC: 234, ETH: 323, CRD: 0.3242 }}
             connectedAddress="0x1234...xx8f"
