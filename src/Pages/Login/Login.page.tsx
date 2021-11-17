@@ -5,18 +5,21 @@ import LoginForm from "../../Components/Login/LoginForm";
 import { useUser } from "../../Context/user.context";
 import { useAuth } from "../../Context/auth.context";
 import "./LoginPage.css";
+import { useEthProvider } from "../../Context/web3.context";
 
 const LoginPage: FC = () => {
   const user = useUser();
   const { authError } = useAuth();
+  const { provider } = useEthProvider();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { from: Location };
-  const web3 = null; // this will come from a global web3 provider
   useEffect(() => {
     const from = state ? state.from.pathname : "/";
-    if (user && !web3) {
+    if (user && !provider) {
       navigate("/wallet-connect", { replace: true });
+    } else if (user && provider) {
+      navigate("/", { replace: true });
     }
   }, [user]);
 

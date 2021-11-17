@@ -60,7 +60,7 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
   const logout = () => {
     localStorage.clear();
     setState(undefined);
-    navigate("/", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
