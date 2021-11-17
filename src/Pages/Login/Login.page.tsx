@@ -18,6 +18,8 @@ const LoginPage: FC = () => {
     const from = state ? state.from.pathname : "/";
     if (user && !provider) {
       navigate("/wallet-connect", { replace: true });
+    } else if (user && provider) {
+      navigate("/", { replace: true });
     }
   }, [user]);
 

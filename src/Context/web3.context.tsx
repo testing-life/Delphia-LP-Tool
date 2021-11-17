@@ -26,7 +26,25 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [provider, setProvider] = useState<any | undefined>(undefined);
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [error, setError] = useState<Error>();
+  useEffect(() => {
+    if (provider) {
+      //on disconnect reset provider
+      // Subscribe to accounts change
+      provider.on("accountsChanged", (accounts: any) => {
+        console.log(`accounts`, accounts);
+      });
 
+      // Subscribe to chainId change
+      provider.on("chainChanged", (chainId: any) => {
+        console.log(`chainId`, chainId);
+      });
+
+      // Subscribe to networkId change
+      provider.on("networkChanged", (networkId: any) => {
+        console.log(`networkId`, networkId);
+      });
+    }
+  }, [provider]);
   return (
     <Web3Context.Provider
       value={{ provider, signer, setProvider, setSigner, error }}
