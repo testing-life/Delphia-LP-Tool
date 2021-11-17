@@ -30,9 +30,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     if (provider) {
       //on disconnect reset provider
       // Subscribe to accounts change
-      provider.provider.on("accountsChanged", (accounts: any) => {
-        console.log(`accounts`, accounts);
-      });
+      provider.provider.on("accountsChanged", accountsChangeHandler);
 
       // Subscribe to chainId change
       provider.provider.on("chainChanged", (chainId: any) => {
@@ -45,6 +43,13 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
       });
     }
   }, [provider]);
+
+  const accountsChangeHandler = async (accounts: string[]) => {
+    console.log(`accounts`, accounts);
+    if (!accounts.length) {
+      setProvider(undefined);
+    }
+  };
   return (
     <Web3Context.Provider
       value={{ provider, signer, setProvider, setSigner, error }}

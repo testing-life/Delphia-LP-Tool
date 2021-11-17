@@ -10,33 +10,27 @@ const AuthorisedApp: FC = () => {
   const { logout } = useAuth();
   const { provider, signer, setProvider } = useEthProvider();
   console.log(`user in auth app`, user, provider);
-  provider.listAccounts().then((res: any) => console.log(`auth accounts`, res));
-  // Subscribe to accounts change
-  useEffect(() => {
-    provider.on("accountschanged", (accounts: any) => {
-      console.log(`accounts`, accounts);
-    });
-    // Subscribe to accounts change
-    provider.on("disconnect", (e: any) => {
-      console.log(`e`, e);
-    });
-    a();
-  }, []);
-  const a = async () => {
-    const x = await signer.getAddress();
-    console.log(`signer.getAddress()`, x);
-  };
+  // provider.listAccounts().then((res: any) => console.log(`auth accounts`, res));
+  // // Subscribe to accounts change
+  // useEffect(() => {
+  //   provider.on("accountschanged", (accounts: any) => {
+  //     console.log(`accounts`, accounts);
+  //   });
+  //   // Subscribe to accounts change
+  //   provider.on("disconnect", (e: any) => {
+  //     console.log(`e`, e);
+  //   });
+  //   a();
+  // }, []);
+  // const a = async () => {
+  //   const x = await signer.getAddress();
+  //   console.log(`signer.getAddress()`, x);
+  // };
   return (
     <div>
       is authorisedApp
       <div>
-        <button
-          onClick={() => {
-            logout();
-          }}
-        >
-          logout
-        </button>
+        <button onClick={logout}>logout</button>
       </div>
     </div>
   );
