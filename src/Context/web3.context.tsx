@@ -30,17 +30,17 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     if (provider) {
       //on disconnect reset provider
       // Subscribe to accounts change
-      provider.on("accountsChanged", (accounts: any) => {
+      provider.provider.on("accountsChanged", (accounts: any) => {
         console.log(`accounts`, accounts);
       });
 
       // Subscribe to chainId change
-      provider.on("chainChanged", (chainId: any) => {
+      provider.provider.on("chainChanged", (chainId: any) => {
         console.log(`chainId`, chainId);
       });
 
       // Subscribe to networkId change
-      provider.on("networkChanged", (networkId: any) => {
+      provider.provider.on("networkChanged", (networkId: any) => {
         console.log(`networkId`, networkId);
       });
     }
