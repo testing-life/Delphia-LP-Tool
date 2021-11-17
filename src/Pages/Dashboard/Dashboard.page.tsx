@@ -19,7 +19,6 @@ const DashboardPage: FC = () => {
   const [currentAddress, setCurrentAddress] = useState<string>();
   const { provider, signer, setProvider, accounts } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
-  console.dir(user);
   console.log(`accounts`, accounts);
 
   useEffect(() => {
@@ -27,13 +26,28 @@ const DashboardPage: FC = () => {
     if (signer) {
       getAddress();
     }
-    if (currentAddress && (user as IUser).addresses.length) {
+    if (
+      (currentAddress || accounts?.length) &&
+      (user as IUser).addresses.length
+    ) {
       isActiveAddressCorrect();
     }
-  }, [accounts]);
+  }, [, accounts]);
+
+  // useEffect(() => {
+  //   if (
+  //     accounts?.length &&
+  //     currentAddress &&
+  //     (user as IUser).addresses.length
+  //   ) {
+  //     isActiveAddressCorrect();
+  //   }
+  // }, [accounts]);
 
   const getAddress = async () => {
-    const address = await signer.getAddress();
+    const address = await signer
+      .getAddress()
+      .catch((error: any) => console.log(`error`, error));
     setCurrentAddress(address);
   };
 
@@ -44,9 +58,14 @@ const DashboardPage: FC = () => {
     );
     setAddressError(!result);
   };
-
+  const reconnect = async () => {
+    console.log(`provider,signer`, provider, signer);
+    await provider
+      .send("eth_requestAccounts", [])
+      .catch((e: any) => console.log(`e`, e));
+  };
   return (
-    <>
+    <section>
       <Navigation
         leftAligned={
           <AvatarLink
@@ -56,16 +75,24 @@ const DashboardPage: FC = () => {
         }
         rightAligned={
           <>
-            <TransactionStatusLink
-              path="https://ecosia.org"
-              transactionCount={4}
-            />
-            <ConnectedWalletDetails
-              balances={{ SEC: 234, ETH: 323, CRD: 0.3242 }}
-              connectedAddress={currentAddress as string}
-              error={addressError}
-            />
-            <Button variant="primary">Connect Wallet</Button>
+            {accounts?.length && !addressError ? (
+              <TransactionStatusLink
+                path="https://ecosia.org"
+                transactionCount={4}
+              />
+            ) : null}
+            {accounts?.length ? (
+              <ConnectedWalletDetails
+                balances={{ SEC: 234, ETH: 323, CRD: 0.3242 }}
+                connectedAddress={currentAddress as string}
+                error={addressError}
+              />
+            ) : null}
+            {!accounts?.length && (
+              <Button variant="primary" onClick={() => reconnect()}>
+                Connect Wallet
+              </Button>
+            )}
             <IconButton onClick={() => {}}>
               <DotsVerticalIcon className="h-6 w-6 text-black" />
             </IconButton>
@@ -75,7 +102,7 @@ const DashboardPage: FC = () => {
       <div>
         <button onClick={logout}>logout</button>
       </div>
-    </>
+    </section>
   );
 };
 
