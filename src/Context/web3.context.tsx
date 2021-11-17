@@ -14,6 +14,7 @@ export type TWeb3Context = {
   provider: any;
   signer: any;
   error: Error | undefined;
+  accounts: string[] | undefined;
 };
 
 interface IWeb3Provider {
@@ -26,6 +27,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [provider, setProvider] = useState<any | undefined>(undefined);
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [error, setError] = useState<Error>();
+  const [accounts, setAccounts] = useState<string[] | undefined>();
   useEffect(() => {
     if (provider) {
       //on disconnect reset provider
@@ -49,10 +51,11 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     if (!accounts.length) {
       setProvider(undefined);
     }
+    setAccounts(accounts);
   };
   return (
     <Web3Context.Provider
-      value={{ provider, signer, setProvider, setSigner, error }}
+      value={{ provider, signer, setProvider, setSigner, error, accounts }}
       {...props}
     />
   );

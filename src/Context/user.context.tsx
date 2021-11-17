@@ -24,20 +24,23 @@ interface IUserProvider {
 const UserContext = createContext<UserContext | undefined>(undefined);
 
 const UserProvider: FC<IUserProvider> = (props) => {
-  const [user, setUser] = useState<IUser | undefined>(useAuth().state);
+  const { state } = useAuth();
+  const [user, setUser] = useState<IUser | undefined>(undefined);
 
   useEffect(() => {
-    if (user) {
+    if (state) {
       setRoles();
     }
-  }, [user]);
+    if (!state) {
+      setUser(state);
+    }
+  }, [state]);
 
   const setRoles = async () => {
     const addresses = await getAddresses();
-    if (user && addresses) {
-      const newUser = { ...user, addresses };
+    if (state && addresses) {
+      const newUser = { ...state, addresses };
       setUser(newUser);
-      // console.log(`newUser`, newUser);
     }
   };
 
@@ -47,11 +50,14 @@ const UserProvider: FC<IUserProvider> = (props) => {
       return [
         "0xe0b609917c7387bd674b6F2a874097c4136502F9",
         "0xe0b609917c7387xxx74b6F2a874097c4136502F9",
+        "0xC1BDf6C0D1f4ED95CdefD1c2B849baB5B373dC6b",
+        "0xC1BDf6C0D1f4EDxxxdefD1c2B849baB5B373dC6b",
       ];
     } catch (error) {
       throw new Error("get addresses error");
     }
   };
+
   return <UserContext.Provider value={user} {...props} />;
 };
 

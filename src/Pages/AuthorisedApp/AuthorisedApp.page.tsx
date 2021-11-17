@@ -8,8 +8,18 @@ import { useEthProvider } from "../../Context/web3.context";
 const AuthorisedApp: FC = () => {
   const user = useUser();
   const { logout } = useAuth();
-  const { provider, signer, setProvider } = useEthProvider();
-  console.log(`user in auth app`, user, provider);
+  const { provider, signer, setProvider, accounts } = useEthProvider();
+  console.dir(user);
+  console.log(`accounts`, accounts);
+  useEffect(() => {
+    console.log(`object`, accounts);
+    getAddress();
+  }, [accounts]);
+  const getAddress = async () => {
+    const address = await signer.getAddress();
+    console.log(`object`, address);
+  };
+
   // provider.listAccounts().then((res: any) => console.log(`auth accounts`, res));
   // // Subscribe to accounts change
   // useEffect(() => {
@@ -22,10 +32,6 @@ const AuthorisedApp: FC = () => {
   //   });
   //   a();
   // }, []);
-  // const a = async () => {
-  //   const x = await signer.getAddress();
-  //   console.log(`signer.getAddress()`, x);
-  // };
   return (
     <div>
       is authorisedApp
