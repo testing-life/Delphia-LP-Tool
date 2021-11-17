@@ -10,7 +10,7 @@ export interface ConnectedWalletDetailsProps {
 const ConnectedWalletDetails: FC<ConnectedWalletDetailsProps> = ({
   error,
   balances,
-  connectedAddress,
+  connectedAddress = "",
 }) => {
   return (
     <div
@@ -31,7 +31,10 @@ const ConnectedWalletDetails: FC<ConnectedWalletDetailsProps> = ({
         })}
       {error && <span className="text-white">Unregistered Wallet</span>}
       <span className="connectedWalletDetails__connectedAddress">
-        {connectedAddress}
+        {`${connectedAddress.substring(0, 6)}...${connectedAddress.substring(
+          connectedAddress.length - 4,
+          connectedAddress.length
+        )}`}
       </span>
     </div>
   );

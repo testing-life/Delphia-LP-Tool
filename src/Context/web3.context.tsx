@@ -6,7 +6,6 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { ethers } from "ethers";
 
 export type TWeb3Context = {
   setProvider: any;
