@@ -47,7 +47,11 @@ const UserProvider: FC<IUserProvider> = (props) => {
   const getAddresses = (): string[] => {
     console.log(`get addresses called`);
     try {
-      return ["0xe0b609917c7387bd674b6F2a874097c4136502F9"];
+      return [
+        "0xe0b609917c7387bd674b6F2a874097c4136502F9",
+        "0xe0b609917c7387bd674b6F2a874097c4136502c9",
+        "0xe0b609917c7387bd674b6F2a874097c41365sdF9",
+      ];
     } catch (error) {
       throw new Error("get addresses error");
     }
