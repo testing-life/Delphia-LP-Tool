@@ -26,16 +26,14 @@ const TopBar = () => {
 
   useEffect(() => {
     if (accounts?.length) {
-      setCurrentAddress(accounts[0]);
-    }
-    if (!accounts?.length && addressError) {
       setAddressError(false);
+      setCurrentAddress(accounts[0]);
     }
   }, [accounts]);
 
   useEffect(() => {
     if (currentAddress && (user as IUser).addresses.length) {
-      isActiveAddressCorrect();
+      isActiveAddressCorrect((user as IUser).addresses, currentAddress);
     }
   }, [currentAddress]);
 
@@ -46,11 +44,12 @@ const TopBar = () => {
     setCurrentAddress(address);
   };
 
-  const isActiveAddressCorrect = (): void => {
-    const result = isRegistered(
-      (user as IUser).addresses,
-      currentAddress as string
-    );
+  const isActiveAddressCorrect = (
+    addresses: string[],
+    currentAddress: string
+  ): void => {
+    const result = addresses.includes(currentAddress);
+    console.log(`result`, result);
     setAddressError(!result);
   };
 
