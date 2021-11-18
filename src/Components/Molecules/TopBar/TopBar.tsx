@@ -25,9 +25,8 @@ const TopBar = () => {
   }, []);
 
   useEffect(() => {
-    console.log(`object`, accounts);
-    if (signer) {
-      getAddress();
+    if (accounts?.length) {
+      setCurrentAddress(accounts[0]);
     }
     if (!accounts?.length && addressError) {
       setAddressError(false);
@@ -62,6 +61,7 @@ const TopBar = () => {
       console.error((error as Error).message);
     }
   };
+
   return (
     <>
       <Navigation

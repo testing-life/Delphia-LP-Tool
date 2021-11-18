@@ -21,7 +21,7 @@ const LoginPage: FC = () => {
     } else if (user && provider) {
       navigate("/", { replace: true });
     }
-  }, [user]);
+  }, [user, provider]);
 
   return (
     <div className="loginPage">

@@ -6,6 +6,8 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import detectEthereumProvider from "@metamask/detect-provider";
+import { ethers } from "ethers";
 
 export type TWeb3Context = {
   setProvider: any;
@@ -27,6 +29,11 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [error, setError] = useState<Error>();
   const [accounts, setAccounts] = useState<string[]>([]);
+
+  useEffect(() => {
+    setExistingProvider();
+  }, []);
+
   useEffect(() => {
     if (provider) {
       // Subscribe to accounts change
@@ -41,6 +48,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
       provider.provider.on("networkChanged", (networkId: any) => {
         console.log(`networkId`, networkId);
       });
+
+      listAccounts();
     }
   }, [provider]);
 
@@ -48,6 +57,26 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     console.log(`accounts in handler`, accounts);
     setAccounts(accounts);
   };
+
+  const setExistingProvider = async (): Promise<void> => {
+    const existingProvider = await detectEthereumProvider();
+    if (!existingProvider) {
+      return;
+    }
+    const newProvider =
+      existingProvider &&
+      new ethers.providers.Web3Provider(existingProvider as any);
+    console.log(`provider detected`, newProvider);
+    if (newProvider) {
+      setProvider(newProvider);
+    }
+  };
+
+  const listAccounts = async (): Promise<void> => {
+    const newAccounts = await provider.listAccounts();
+    setAccounts(newAccounts);
+  };
+
   return (
     <Web3Context.Provider
       value={{ provider, signer, setProvider, setSigner, error, accounts }}
