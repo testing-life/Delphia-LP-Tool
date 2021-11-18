@@ -24,9 +24,11 @@ const TopBar = () => {
   }, []);
 
   useEffect(() => {
+    setAddressError(false);
     if (accounts?.length) {
-      setAddressError(false);
       setCurrentAddress(accounts[0]);
+    } else {
+      setCurrentAddress(null);
     }
   }, [accounts]);
 
@@ -48,7 +50,6 @@ const TopBar = () => {
     currentAddress: string
   ): void => {
     const result = addresses.includes(currentAddress);
-    console.log(`result`, result);
     setAddressError(!result);
   };
 
