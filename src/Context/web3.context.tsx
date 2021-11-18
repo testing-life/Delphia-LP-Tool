@@ -26,10 +26,9 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [provider, setProvider] = useState<any | undefined>(undefined);
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [error, setError] = useState<Error>();
-  const [accounts, setAccounts] = useState<string[] | undefined>();
+  const [accounts, setAccounts] = useState<string[]>([]);
   useEffect(() => {
     if (provider) {
-      //on disconnect reset provider
       // Subscribe to accounts change
       provider.provider.on("accountsChanged", accountsChangeHandler);
 
@@ -46,10 +45,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   }, [provider]);
 
   const accountsChangeHandler = async (accounts: string[]) => {
-    console.log(`accounts`, accounts);
-    if (!accounts.length) {
-      setProvider(undefined);
-    }
+    console.log(`accounts in handler`, accounts);
     setAccounts(accounts);
   };
   return (
