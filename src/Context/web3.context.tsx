@@ -54,7 +54,6 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   }, [provider]);
 
   const accountsChangeHandler = async (accounts: string[]) => {
-    console.log(`accounts in handler`, accounts);
     setAccounts(accounts);
   };
 
@@ -66,7 +65,6 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     const newProvider =
       existingProvider &&
       new ethers.providers.Web3Provider(existingProvider as any);
-    console.log(`provider detected`, newProvider);
     if (newProvider) {
       setProvider(newProvider);
     }
