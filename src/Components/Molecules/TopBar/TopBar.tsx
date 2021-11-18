@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../../Context/auth.context";
 import { IUser, useUser } from "../../../Context/user.context";
 import { useEthProvider } from "../../../Context/web3.context";
-import { isRegistered } from "../../../Utils/ethAddress";
 import AvatarLink from "../../Atoms/AvatarLink/AvatarLink";
 import Button from "../../Atoms/Button/Button";
 import IconButton from "../../Atoms/IconButton/IconButton";
