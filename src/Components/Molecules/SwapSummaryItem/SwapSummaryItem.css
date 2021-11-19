@@ -1,0 +1,13 @@
+@layer components {
+  .swapSummaryItem {
+    @apply text-gray-900 text-base flex justify-between;
+  }
+
+  .swapSummaryItem__label {
+    @apply font-semibold flex items-center;
+  }
+
+  .swapSummaryItem__value {
+    @apply font-medium;
+  }
+}
