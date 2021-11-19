@@ -1,5 +1,13 @@
 @layer components {
   .swapInput {
-    @apply flex items-center justify-between p-3 gap-7 border-gray-200 border bg-gray-50 rounded-lg;
+    @apply border-gray-200 border bg-gray-50 rounded-lg p-3;
+  }
+
+  .swapInput__label {
+    @apply text-gray-600 mb-2 block text-sm font-semibold;
+  }
+
+  .swapInput__inputWrapper {
+    @apply flex items-center justify-between gap-7;
   }
 }

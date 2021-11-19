@@ -17,7 +17,7 @@ export default {
   },
 } as Meta;
 
-const Template: Story<SwapInputProps> = (args) => (
+const TemplateTo: Story<SwapInputProps> = (args) => (
   <SwapInput {...args}>
     <TokenAvatar
       caption="SEC"
@@ -34,18 +34,29 @@ const Template: Story<SwapInputProps> = (args) => (
   </SwapInput>
 );
 
-export const SwapInputFrom = Template.bind({});
+const TemplateFrom: Story<SwapInputProps> = (args) => (
+  <SwapInput {...args}>
+    <TokenAvatar
+      caption="SEC"
+      imgSrc="https://upload.wikimedia.org/wikipedia/commons/b/be/Ecosia-like_logo.svg"
+    />
+    <MaxCurrencyInput
+      value="0.0"
+      type="text"
+      placeholder="0.0"
+      name="from"
+      maxValue="123"
+      onChange={(e) => console.log(`e`, e)}
+    />
+  </SwapInput>
+);
+
+export const SwapInputFrom = TemplateFrom.bind({});
 SwapInputFrom.args = {
-  onChange: (val: any) => console.log(`val`, val),
   label: "Swap from",
 };
 
-export const SwapInputTo = Template.bind({});
+export const SwapInputTo = TemplateTo.bind({});
 SwapInputTo.args = {
-  // children: "I'm an input",
-  // placeholder: "placeholder",
-  // value: "0.21",
-  // maxValue: "0.666",
-  // name: "this be monies",
-  onChange: (val: any) => console.log(`val`, val),
+  label: "Swap to",
 };

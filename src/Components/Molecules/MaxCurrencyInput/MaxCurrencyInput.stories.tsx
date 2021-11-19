@@ -27,3 +27,12 @@ MaxCurrencyInputTemplate.args = {
   name: "this be monies",
   onChange: (val: any) => console.log(`val`, val),
 };
+
+export const MaxOptionalCurrencyInputTemplate = Template.bind({});
+MaxOptionalCurrencyInputTemplate.args = {
+  children: "I'm an input",
+  placeholder: "placeholder",
+  value: "0.21",
+  name: "this be monies",
+  onChange: (val: any) => console.log(`val`, val),
+};
