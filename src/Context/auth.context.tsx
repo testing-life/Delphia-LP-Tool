@@ -7,7 +7,6 @@ import React, {
   useEffect,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCircularReplacer } from "../Utils/cyclicReference";
 import { IUser } from "./user.context";
 
 export type AuthContext = {
@@ -51,10 +50,7 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
       const data = await res.json();
       if (res.ok && data) {
         setState(data[0]);
-        localStorage.setItem(
-          "user",
-          JSON.stringify(data[0], getCircularReplacer())
-        );
+        localStorage.setItem("user", JSON.stringify(data[0]));
       }
     } catch (error) {
       setAuthError({ message: "Im an auth error" } as Error);
