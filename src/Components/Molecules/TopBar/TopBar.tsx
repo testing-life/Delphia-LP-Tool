@@ -1,5 +1,5 @@
 import { DotsVerticalIcon } from "@heroicons/react/solid";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useAuth } from "../../../Context/auth.context";
 import { IUser, useUser } from "../../../Context/user.context";
 import { useEthProvider } from "../../../Context/web3.context";
@@ -9,49 +9,14 @@ import IconButton from "../../Atoms/IconButton/IconButton";
 import Navigation from "../../Organisms/Navigation/Navigation";
 import ConnectedWalletDetails from "../ConnectedWalletDetails/ConnectedWalletDetails";
 import TransactionStatusLink from "../TransactionStatusLink/TransactionStatusLink";
-
-const TopBar = () => {
-  const user = useUser();
+interface TopBarProps {
+  currentAddress: string;
+  accounts: string[];
+  addressError: boolean;
+}
+const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
   const { logout } = useAuth();
-  const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const { provider, signer, accounts } = useEthProvider();
-  const [addressError, setAddressError] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (signer) {
-      getAddress();
-    }
-  }, []);
-
-  useEffect(() => {
-    setAddressError(false);
-    if (accounts?.length) {
-      setCurrentAddress(accounts[0]);
-    } else {
-      setCurrentAddress(null);
-    }
-  }, [accounts]);
-
-  useEffect(() => {
-    if (currentAddress && (user as IUser).addresses.length) {
-      isActiveAddressCorrect((user as IUser).addresses, currentAddress);
-    }
-  }, [currentAddress]);
-
-  const getAddress = async () => {
-    const address = await signer
-      .getAddress()
-      .catch((error: any) => console.warn(`error`, error));
-    setCurrentAddress(address);
-  };
-
-  const isActiveAddressCorrect = (
-    addresses: string[],
-    currentAddress: string
-  ): void => {
-    const result = addresses.includes(currentAddress);
-    setAddressError(!result);
-  };
+  const { provider } = useEthProvider();
 
   const reconnect = async () => {
     try {

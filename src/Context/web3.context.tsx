@@ -67,6 +67,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
       new ethers.providers.Web3Provider(existingProvider as any);
     if (newProvider) {
       setProvider(newProvider);
+      setSigner((newProvider as any).getSigner());
     }
   };
 
