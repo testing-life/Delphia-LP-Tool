@@ -18,7 +18,7 @@ function App() {
       <Route path="/create-password" element={<CreatePasswordPage />}></Route>
 
       <Route
-        path="wallet-connect"
+        path="/wallet-connect"
         element={<ProtectedRoute>{<WalletConnectPage />}</ProtectedRoute>}
       ></Route>
     </Routes>

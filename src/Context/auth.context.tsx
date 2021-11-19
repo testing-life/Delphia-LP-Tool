@@ -59,6 +59,7 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
 
   const logout = () => {
     localStorage.clear();
+    sessionStorage.clear();
     setState(undefined);
     navigate("/", { replace: true });
   };

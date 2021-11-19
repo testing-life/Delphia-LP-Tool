@@ -1,5 +1,6 @@
 @layer components {
   .card {
-    @apply bg-white py-14 px-20 rounded-2xl min-w-xl;
+    width: 36rem;
+    @apply bg-white py-14 px-20 rounded-2xl;
   }
 }

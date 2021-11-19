@@ -9,7 +9,6 @@ const LoginForm: FC<any> = () => {
 
   const onSubmit = (e: any) => {
     e.preventDefault();
-    console.log(`args`, e);
     login();
   };
 
