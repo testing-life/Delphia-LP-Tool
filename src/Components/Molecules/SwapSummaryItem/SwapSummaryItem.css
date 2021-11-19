@@ -4,7 +4,7 @@
   }
 
   .swapSummaryItem__label {
-    @apply font-semibold;
+    @apply font-semibold flex items-center;
   }
 
   .swapSummaryItem__value {
