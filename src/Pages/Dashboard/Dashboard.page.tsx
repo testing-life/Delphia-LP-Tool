@@ -24,7 +24,6 @@ const DashboardPage: FC = () => {
       const isRegistered = (user as IUser).addresses.includes(
         currentAddress as string
       );
-      console.log(`isRegistered`, isRegistered);
       setAddressError(!isRegistered);
     }
   }, [currentAddress]);

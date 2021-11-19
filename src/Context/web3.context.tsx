@@ -6,8 +6,6 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import detectEthereumProvider from "@metamask/detect-provider";
-import { ethers } from "ethers";
 
 export type TWeb3Context = {
   setProvider: any;
@@ -31,10 +29,6 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [accounts, setAccounts] = useState<string[]>([]);
 
   useEffect(() => {
-    setExistingProvider();
-  }, []);
-
-  useEffect(() => {
     if (provider) {
       // Subscribe to accounts change
       provider.provider.on("accountsChanged", accountsChangeHandler);
@@ -55,20 +49,6 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
 
   const accountsChangeHandler = async (accounts: string[]) => {
     setAccounts(accounts);
-  };
-
-  const setExistingProvider = async (): Promise<void> => {
-    const existingProvider = await detectEthereumProvider();
-    if (!existingProvider) {
-      return;
-    }
-    const newProvider =
-      existingProvider &&
-      new ethers.providers.Web3Provider(existingProvider as any);
-    if (newProvider) {
-      setProvider(newProvider);
-      setSigner((newProvider as any).getSigner());
-    }
   };
 
   const listAccounts = async (): Promise<void> => {
