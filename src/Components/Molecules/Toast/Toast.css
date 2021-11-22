@@ -1,6 +1,6 @@
 @layer components {
   .toast {
-    @apply rounded-md p-4 text-base font-semibold flex w-96;
+    @apply rounded-md p-4 text-xl font-semibold flex w-96;
   }
 
   .toast__infoIcon {

@@ -15,3 +15,11 @@ ToastSuccess.args = {
   etherscanUrl: "https://ecosia.org",
   onClose: () => console.log(`close toast`),
 };
+
+export const ToastError = Template.bind({});
+ToastError.args = {
+  variant: "error",
+  message: "Transaction error",
+  etherscanUrl: "https://ecosia.org",
+  onClose: () => console.log(`close toast`),
+};

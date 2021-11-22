@@ -20,7 +20,9 @@ const AvatarLink: FC<AvatarLinkProps> = ({
   return (
     <Link
       to={path}
-      className={`avatarLink avatarLink--${size}`}
+      className={`avatarLink ${
+        size === "default" ? "avatarLink--default" : "avatarLink--large"
+      }`}
       onClick={onClick}
     >
       <img src={imgSrc} alt={alt} />
