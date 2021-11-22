@@ -18,7 +18,11 @@ const Toast: FC<ToastProps> = ({
 }) => {
   console.log(`variant`, variant);
   return (
-    <div className={`toast toast--${variant}`}>
+    <div
+      className={`toast ${
+        variant === "success" ? "toast--success" : "toast--error"
+      }`}
+    >
       <InformationCircleIcon className="toast__infoIcon" />
       <div className="toast__messageWrapper">
         {message}
