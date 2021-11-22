@@ -4,6 +4,7 @@ import TopBar from "../../Components/Molecules/TopBar/TopBar";
 import { IUser, useUser } from "../../Context/user.context";
 import { useEthProvider } from "../../Context/web3.context";
 import toast, { Toaster } from "react-hot-toast";
+import Toast from "../../Components/Molecules/Toast/Toast";
 
 const DashboardPage: FC = () => {
   const user = useUser();
@@ -35,7 +36,15 @@ const DashboardPage: FC = () => {
       .catch((error: any) => console.warn(`address error`, error));
     setCurrentAddress(address);
   };
-  const notify = () => toast.custom(<div>"toast"</div>);
+  const notify = (variant: any) =>
+    toast.custom(
+      <Toast
+        variant={variant}
+        message="Transaction successfull"
+        etherscanUrl="https://ecosia.org"
+        onClose={() => toast.dismiss()}
+      />
+    );
   return (
     <section>
       <TopBar
@@ -44,7 +53,9 @@ const DashboardPage: FC = () => {
         addressError={addressError}
       />
       <br />
-      <button onClick={notify}>toast</button>
+      <button onClick={() => notify("error")}>toast</button>
+      <br />
+      <button onClick={() => notify("success")}>toast succ</button>
       <div className="bg-gray-800 text-gray-900 flex h-screen justify-center items-start pt-28 relative">
         {addressError && (
           <Card>
@@ -59,7 +70,9 @@ const DashboardPage: FC = () => {
         )}
         <Toaster
           position="top-right"
-          toastOptions={{ duration: Infinity }}
+          toastOptions={{
+            duration: 5000,
+          }}
           containerStyle={{
             marginTop: "3rem",
           }}

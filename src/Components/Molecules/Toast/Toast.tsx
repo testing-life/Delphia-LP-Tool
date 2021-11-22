@@ -16,6 +16,7 @@ const Toast: FC<ToastProps> = ({
   etherscanUrl = "",
   onClose,
 }) => {
+  console.log(`variant`, variant);
   return (
     <div className={`toast toast--${variant}`}>
       <InformationCircleIcon className="toast__infoIcon" />
