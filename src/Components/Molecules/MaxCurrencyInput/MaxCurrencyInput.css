@@ -1,6 +1,6 @@
 @layer components {
   .maxCurrencyInput {
-    @apply relative flex;
+    @apply relative flex w-full;
   }
 
   .maxCurrencyInput .input {

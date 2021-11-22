@@ -3,6 +3,7 @@ import Card from "../../Components/Atoms/Card/Card";
 import TopBar from "../../Components/Molecules/TopBar/TopBar";
 import { IUser, useUser } from "../../Context/user.context";
 import { useEthProvider } from "../../Context/web3.context";
+import toast, { Toaster } from "react-hot-toast";
 
 const DashboardPage: FC = () => {
   const user = useUser();
@@ -34,7 +35,7 @@ const DashboardPage: FC = () => {
       .catch((error: any) => console.warn(`address error`, error));
     setCurrentAddress(address);
   };
-
+  const notify = () => toast.custom(<div>"toast"</div>);
   return (
     <section>
       <TopBar
@@ -42,7 +43,9 @@ const DashboardPage: FC = () => {
         accounts={accounts as string[]}
         addressError={addressError}
       />
-      <div className="bg-gray-800 text-gray-900 flex h-screen justify-center items-start pt-28">
+      <br />
+      <button onClick={notify}>toast</button>
+      <div className="bg-gray-800 text-gray-900 flex h-screen justify-center items-start pt-28 relative">
         {addressError && (
           <Card>
             <h1 className="text-3xl font-semibold mb-5 text-center">
@@ -54,6 +57,13 @@ const DashboardPage: FC = () => {
             </p>
           </Card>
         )}
+        <Toaster
+          position="top-right"
+          toastOptions={{ duration: Infinity }}
+          containerStyle={{
+            marginTop: "3rem",
+          }}
+        />
       </div>
     </section>
   );
