@@ -4,11 +4,12 @@ import "./IconButton.css";
 export interface IconButtonProps {
   onClick: () => void;
   children: ReactNode;
+  classes?: string;
 }
 
-const IconButton: FC<IconButtonProps> = ({ children, onClick }) => {
+const IconButton: FC<IconButtonProps> = ({ children, onClick, classes }) => {
   return (
-    <button className="iconButton" onClick={onClick}>
+    <button className={`iconButton ${classes}`} onClick={onClick}>
       {children}
     </button>
   );

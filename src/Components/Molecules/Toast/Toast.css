@@ -1,0 +1,18 @@
+@layer components {
+  .toast {
+    @apply rounded-md p-4 text-base font-semibold flex max-w-md;
+  }
+
+  .toast__infoIcon {
+    min-width: 1.5rem;
+    @apply w-6 h-6 mr-2;
+  }
+
+  .toast--success {
+    @apply text-green-600 bg-green-100;
+  }
+
+  .toast--error {
+    @apply text-red-700 bg-red-100;
+  }
+}
