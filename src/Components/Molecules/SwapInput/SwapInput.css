@@ -8,6 +8,6 @@
   }
 
   .swapInput__inputWrapper {
-    @apply flex items-center justify-between gap-7;
+    @apply flex items-center justify-between gap-12;
   }
 }
