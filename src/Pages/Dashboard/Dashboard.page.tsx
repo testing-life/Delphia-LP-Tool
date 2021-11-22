@@ -5,6 +5,9 @@ import { IUser, useUser } from "../../Context/user.context";
 import { useEthProvider } from "../../Context/web3.context";
 import toast, { Toaster } from "react-hot-toast";
 import Toast from "../../Components/Molecules/Toast/Toast";
+import Tabs from "../../Components/Molecules/Tabs/Tabs";
+import Tab from "../../Components/Molecules/Tab/Tab";
+import SwapApproval from "../../Components/SwapApproval/SwapApproval";
 
 const DashboardPage: FC = () => {
   const user = useUser();
@@ -52,10 +55,10 @@ const DashboardPage: FC = () => {
         accounts={accounts as string[]}
         addressError={addressError}
       />
-      <br />
+      {/* <br />
       <button onClick={() => notify("error")}>toast</button>
       <br />
-      <button onClick={() => notify("success")}>toast succ</button>
+      <button onClick={() => notify("success")}>toast succ</button> */}
       <div className="bg-gray-800 text-gray-900 flex h-screen justify-center items-start pt-28 relative">
         {addressError && (
           <Card>
@@ -68,6 +71,18 @@ const DashboardPage: FC = () => {
             </p>
           </Card>
         )}
+        <Tabs labels={["Swap SEC", "Swap CRD"]}>
+          <Tab>
+            <Card>
+              <SwapApproval tokenToUnlock="SEC" />
+            </Card>
+          </Tab>
+          <Tab>
+            <Card>
+              <SwapApproval tokenToUnlock="CRD" />
+            </Card>
+          </Tab>
+        </Tabs>
         <Toaster
           position="top-right"
           toastOptions={{
