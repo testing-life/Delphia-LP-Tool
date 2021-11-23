@@ -56,7 +56,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
         />
       </SwapInput>
       <SwapSummary>
-        <SwapSummaryItem label="Current CRD Price" value="0.15 SEC">
+        <SwapSummaryItem label={`Current ${to} Price`} value={`0.15 ${from}`}>
           <>
             <QuestionMarkCircleIcon
               className="w-6 h-6 text-gray-400 ml-2"
@@ -69,24 +69,27 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
               effect="solid"
               place="bottom"
             >
-              <span>Issa tooltip</span>
+              <span>
+                The price of 1 {to}. Price changes dynamically based on the
+                amount you purchase.
+              </span>
             </ReactTooltip>
           </>
         </SwapSummaryItem>
-        <SwapSummaryItem label="Your receive" value="0.15 SEC">
+        <SwapSummaryItem label="Your receive" value={`0.15 ${to}`}>
           <>
             <QuestionMarkCircleIcon
               className="w-6 h-6 text-gray-400 ml-2"
               data-tip
-              data-for="tooltip-trigger1"
+              data-for="tooltip-trigger2"
             />
             <ReactTooltip
-              id="tooltip-trigger1"
+              id="tooltip-trigger2"
               clickable={true}
               effect="solid"
               place="bottom"
             >
-              <span>Issa tooltip</span>
+              <span>The amount of {to} you will recieve. </span>
             </ReactTooltip>
           </>
         </SwapSummaryItem>
