@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Toast from "../../Components/Molecules/Toast/Toast";
 import Tabs from "../../Components/Molecules/Tabs/Tabs";
 import Tab from "../../Components/Molecules/Tab/Tab";
-import SwapApproval from "../../Components/SwapApproval/SwapApproval";
+import Swap from "../../Components/Swap/Swap";
 
 const DashboardPage: FC = () => {
   const user = useUser();
@@ -71,18 +71,20 @@ const DashboardPage: FC = () => {
             </p>
           </Card>
         )}
-        <Tabs labels={["Swap SEC", "Swap CRD"]}>
-          <Tab>
-            <Card>
-              <SwapApproval tokenToUnlock="SEC" />
-            </Card>
-          </Tab>
-          <Tab>
-            <Card>
-              <SwapApproval tokenToUnlock="CRD" />
-            </Card>
-          </Tab>
-        </Tabs>
+        {!addressError && (
+          <Tabs labels={["Swap SEC", "Swap CRD"]}>
+            <Tab>
+              <Card>
+                <Swap from="SEC" to="CRD" />
+              </Card>
+            </Tab>
+            <Tab>
+              <Card>
+                <Swap from="CRD" to="SEC" />
+              </Card>
+            </Tab>
+          </Tabs>
+        )}
         <Toaster
           position="top-right"
           toastOptions={{

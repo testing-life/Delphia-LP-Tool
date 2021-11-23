@@ -7,6 +7,7 @@ export interface SwapSummaryItemProps {
   value: string;
 }
 const SwapSummary: FC<SwapSummaryItemProps> = ({ children, label, value }) => {
+  console.log(`children`, children);
   return (
     <div className="swapSummaryItem">
       <dt className="swapSummaryItem__label">
