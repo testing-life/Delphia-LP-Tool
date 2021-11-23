@@ -49,7 +49,6 @@ const CreatePasswordPage: FC = () => {
     }
     const { email, password, token } = props;
     try {
-      // test endpoint
       const res = await fetch(`${RequestUrl.BASE_URL}/auth/confirm_email`, {
         method: "POST",
         mode: "cors",
@@ -63,9 +62,13 @@ const CreatePasswordPage: FC = () => {
         },
       });
       if (res && !res.ok) {
-        const t = await res.json();
-        console.log(`res.json()`, t);
-        throw Error(res.statusText);
+        const data = await res.json();
+        const message = data.reduce((acc: any, next: any) => {
+          const msg = `${acc.message} ${next.message}`;
+          return msg;
+        });
+
+        throw Error(message);
       }
       if (res.ok) {
         setPassCreated(true);
