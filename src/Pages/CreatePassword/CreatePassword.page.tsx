@@ -9,6 +9,7 @@ import isEmpty from "validator/lib/isEmpty";
 import "./CreatePasswordPage.css";
 import Button from "../../Components/Atoms/Button/Button";
 import { useNavigate } from "react-router";
+import { RequestUrl } from "../../Consts/requestUrls";
 
 const CreatePasswordPage: FC = () => {
   const [error, setError] = useState<Error | null>(null);
@@ -46,21 +47,30 @@ const CreatePasswordPage: FC = () => {
     if (error) {
       setError(null);
     }
+    const { email, password, token } = props;
     try {
       // test endpoint
-      const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      const res = await fetch(`${RequestUrl.BASE_URL}/auth/confirm_email`, {
         method: "POST",
+        mode: "cors",
         body: JSON.stringify({
-          title: "foo",
-          body: "bar",
-          userId: 1,
+          email,
+          password,
+          token,
         }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
       });
+      if (res && !res.ok) {
+        const t = await res.json();
+        console.log(`res.json()`, t);
+        throw Error(res.statusText);
+      }
       if (res.ok) {
         setPassCreated(true);
+        const t = await res.json();
+        console.log(`res.json()`, t);
       }
     } catch (error) {
       console.warn(error);

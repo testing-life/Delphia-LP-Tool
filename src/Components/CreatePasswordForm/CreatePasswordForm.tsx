@@ -1,21 +1,15 @@
-import React, {
-  ChangeEvent,
-  FC,
-  FormEvent,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { ChangeEvent, FC, FormEvent, useEffect, useState } from "react";
 import useUrlQuery from "../../Hooks/useUrlQuery";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
 import Form from "../Atoms/Form/Form";
 import InputField from "../Atoms/Input/Input";
+import isLength from "validator/lib/isLength";
 
 export interface PasswordCreationStateProps {
-  userName: string | undefined;
+  email: string | undefined;
   password: string | undefined;
-  invitationToken: string | undefined;
+  token: string | undefined;
   repeatPassword: string | undefined;
 }
 
@@ -26,9 +20,9 @@ interface CreatePasswordFormProps {
 const CreatePasswordForm: FC<CreatePasswordFormProps> = ({ onSubmit }) => {
   let query = useUrlQuery();
   const [state, setState] = useState<PasswordCreationStateProps>({
-    userName: undefined,
+    email: undefined,
     password: undefined,
-    invitationToken: undefined,
+    token: undefined,
     repeatPassword: undefined,
   });
 
@@ -39,14 +33,18 @@ const CreatePasswordForm: FC<CreatePasswordFormProps> = ({ onSubmit }) => {
   }, []);
 
   const setStateFromUrlQuery = (): void => {
-    const userName = query.get("userName");
-    const invitationToken = query.get("invitationToken");
-    if (userName && invitationToken) {
-      setState({ ...state, userName, invitationToken });
+    const email = query.get("email");
+    const token = query.get("token");
+    if (email && token) {
+      setState({ ...state, email, token });
     }
   };
 
   const onPasswordChange = debounce((event: ChangeEvent<HTMLInputElement>) => {
+    if (!isLength(event.target.value, { min: 8, max: undefined })) {
+      setError("Password must have at least 8 characters");
+      return;
+    }
     setState({ ...state, [event.target.name]: event.target.value });
     if (state.repeatPassword && event.target.value !== state.repeatPassword) {
       setError("Passwords do not match");
@@ -74,7 +72,7 @@ const CreatePasswordForm: FC<CreatePasswordFormProps> = ({ onSubmit }) => {
           <li className="mb-5">
             <InputField
               name="password"
-              error={!!error}
+              error={error}
               onChange={onPasswordChange}
               type="password"
             >
