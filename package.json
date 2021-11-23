@@ -16,6 +16,7 @@
     "@walletconnect/web3-provider": "^1.6.6",
     "ethers": "^5.5.1",
     "react": "^17.0.2",
+    "react-dialog-async": "^1.0.8",
     "react-dom": "^17.0.2",
     "react-error-boundary": "^3.1.4",
     "react-hot-toast": "^2.1.1",

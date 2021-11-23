@@ -1,6 +1,5 @@
 @layer components {
-  .swapApprovalDialog {
-    @apply w-36 h-32 bg-gray-500 block;
+  .swapApproval {
   }
   .heading {
     @apply text-2xl font-semibold mb-5;
