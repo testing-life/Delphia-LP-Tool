@@ -63,17 +63,18 @@ const CreatePasswordPage: FC = () => {
       });
       if (res && !res.ok) {
         const data = await res.json();
-        const message = data.reduce((acc: any, next: any) => {
-          const msg = `${acc.message} ${next.message}`;
-          return msg;
-        });
+        const message =
+          data.length > 1
+            ? data.reduce((acc: any, next: any) => {
+                const msg = `${acc.message} ${next.message}`;
+                return msg;
+              })
+            : data[0].message;
 
         throw Error(message);
       }
       if (res.ok) {
         setPassCreated(true);
-        const t = await res.json();
-        console.log(`res.json()`, t);
       }
     } catch (error) {
       console.warn(error);
