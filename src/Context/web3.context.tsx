@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from "react";
 import { Tokens } from "../Consts/tokens";
+import { TokenAddresses } from "../Enums/tokensAddresses";
 
 export type TWeb3Context = {
   setProvider: any;
@@ -16,7 +17,7 @@ export type TWeb3Context = {
   signer: any;
   error: Error | undefined;
   accounts: string[] | undefined;
-  balances: { [key: string]: string };
+  balances: TBalances[] | undefined;
   getBalances: (arg: string) => void;
 };
 
@@ -24,18 +25,18 @@ interface IWeb3Provider {
   children: ReactNode;
 }
 
-interface IBalances {
-  SEC: any;
-  CRD: any;
-  ETH: any;
-}
+type TTokens = "SEC" | "CRD" | "ETH";
+
+type TBalances = {
+  [key in TTokens]: string;
+};
 
 const Web3Context = createContext<TWeb3Context>(null!);
 
 const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [provider, setProvider] = useState<any | undefined>(undefined);
   const [signer, setSigner] = useState<any | undefined>(undefined);
-  const [balances, setBalances] = useState<any | undefined>(undefined);
+  const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error>();
   const [accounts, setAccounts] = useState<string[]>([]);
 
@@ -66,6 +67,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     const newAccounts = await provider.listAccounts();
     setAccounts(newAccounts);
   };
+
   const balanceOfABI = [
     {
       inputs: [{ internalType: "address", name: "account", type: "address" }],
@@ -76,52 +78,37 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     },
   ];
 
-  const getBalances = async (currentAddress: string) => {
-    let bal: any = {};
-    Tokens.forEach(async (token) => {
-      const contract = new ethers.Contract(token.address, balanceOfABI, signer);
-      const balance = await contract
-        .balanceOf(currentAddress)
-        .catch((error: Error) => console.log(`error`, error));
-      if (balance) {
-        bal[token.name] = ethers.utils.formatEther(balance);
-      }
-    });
-    // const ethBalance = await signer
-    //   .getBalance()
-    //   .catch((error: any) => console.warn(`address error`, error));
-    // if (ethBalance) {
-    //   bal["ETH"] = ethers.utils.formatEther(ethBalance);
-    // }
-    console.log(`bal`, bal);
-    if (Object.keys(bal).length) {
-      setBalances(bal);
-    }
+  const getTokens = async (
+    token: { name: string; address: TokenAddresses },
+    currentAddress: string
+  ) => {
+    const contract = new ethers.Contract(token.address, balanceOfABI, signer);
+    const balance = await contract
+      .balanceOf(currentAddress)
+      .catch((error: Error) => console.log(`error`, error));
+    return { [token.name]: ethers.utils.formatEther(balance) };
   };
 
-  // const contract = new ethers.Contract(
-  //   TokenAddresses.SEC,
-  //   [
-  //     {
-  //       inputs: [
-  //         { internalType: "address", name: "account", type: "address" },
-  //       ],
-  //       name: "balanceOf",
-  //       outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-  //       stateMutability: "view",
-  //       type: "function",
-  //     },
-  //   ],
-  //   signer
-  // );
-  // const balance = await contract
-  //   .balanceOf(currentAddress)
-  //   .catch((error: any) => console.warn(`address error`, error));
-  // console.log(`contract`, contract);
-  // console.log(
-  //   `balance secccccccccccccccccccccccc`,
-  //   ethers.utils.formatEther(balance)
-  // );
+  const getBalances = async (currentAddress: string) => {
+    const resolveTokenRequests = async () => {
+      return Promise.all(
+        Tokens.map((token) => getTokens(token, currentAddress))
+      );
+    };
+
+    resolveTokenRequests().then(async (res) => {
+      const ethBalance = await signer
+        .getBalance()
+        .catch((error: any) => console.warn(`ETH balance error`, error));
+      if (res && ethBalance) {
+        const newBalances = [
+          ...res,
+          { ETH: ethers.utils.formatEther(ethBalance) },
+        ];
+        setBalances(newBalances as TBalances[]);
+      }
+    });
+  };
 
   return (
     <Web3Context.Provider
