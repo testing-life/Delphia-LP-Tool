@@ -25,9 +25,9 @@ interface IWeb3Provider {
   children: ReactNode;
 }
 
-type TTokens = "SEC" | "CRD" | "ETH";
+export type TTokens = "SEC" | "CRD" | "ETH";
 
-type TBalances = {
+export type TBalances = {
   [key in TTokens]: string;
 };
 
@@ -83,13 +83,21 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     currentAddress: string
   ) => {
     const contract = new ethers.Contract(token.address, balanceOfABI, signer);
-    const balance = await contract
-      .balanceOf(currentAddress)
-      .catch((error: Error) => console.log(`error`, error));
-    return { [token.name]: ethers.utils.formatEther(balance) };
+    let balance = undefined;
+    try {
+      balance = await contract.balanceOf(currentAddress);
+      if (balance) {
+        return { [token.name]: ethers.utils.formatEther(balance) };
+      }
+    } catch (error) {
+      console.log(`error`, error);
+    }
   };
 
-  const getBalances = async (currentAddress: string) => {
+  const getBalances = async (currentAddress: string): Promise<void> => {
+    if (!currentAddress) {
+      return;
+    }
     const resolveTokenRequests = async () => {
       return Promise.all(
         Tokens.map((token) => getTokens(token, currentAddress))

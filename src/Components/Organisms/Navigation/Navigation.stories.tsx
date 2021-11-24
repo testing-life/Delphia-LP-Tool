@@ -30,7 +30,19 @@ const Template: Story = (args) => (
             transactionCount={4}
           />
           <ConnectedWalletDetails
-            balances={{ SEC: 234, ETH: 323, CRD: 0.3242 }}
+            balances={
+              [
+                {
+                  SEC: "1000000.0",
+                },
+                {
+                  CRD: "0.0",
+                },
+                {
+                  ETH: "2.999075712884748674",
+                },
+              ] as any
+            }
             connectedAddress="0x1234...xx8f"
           />
           <Button variant="primary">Connect Wallet</Button>

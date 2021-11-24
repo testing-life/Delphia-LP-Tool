@@ -8,16 +8,11 @@ import Toast from "../../Components/Molecules/Toast/Toast";
 import Tabs from "../../Components/Molecules/Tabs/Tabs";
 import Tab from "../../Components/Molecules/Tab/Tab";
 import Swap from "../../Components/Swap/Swap";
-import { ethers } from "ethers";
-import { SECabi } from "../../ABI/SECabi";
-import { CRDabi } from "../../ABI/CRDabi";
-import { Tokens } from "../../Consts/tokens";
-import { TokenAddresses } from "../../Enums/tokensAddresses";
 
 const DashboardPage: FC = () => {
   const user = useUser();
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const { accounts, signer, balances, getBalances } = useEthProvider();
+  const { accounts, signer } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
 
   useEffect(() => {
@@ -35,10 +30,6 @@ const DashboardPage: FC = () => {
         currentAddress as string
       );
       setAddressError(!isRegistered);
-      getBalances(currentAddress);
-      // getBalance();
-      // getSECBalance();
-      // getCRDBalance();
     }
   }, [currentAddress]);
 
@@ -49,49 +40,6 @@ const DashboardPage: FC = () => {
     setCurrentAddress(address);
   };
 
-  const getBalance = async () => {
-    const balance = await signer
-      .getBalance()
-      .catch((error: any) => console.warn(`address error`, error));
-    console.log(`balance`, balance);
-  };
-
-  const getSECBalance = async () => {
-    const contract = new ethers.Contract(
-      TokenAddresses.SEC,
-      [
-        {
-          inputs: [
-            { internalType: "address", name: "account", type: "address" },
-          ],
-          name: "balanceOf",
-          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      signer
-    );
-
-    const balance = await contract
-      .balanceOf(currentAddress)
-      .catch((error: any) => console.warn(`address error`, error));
-    console.log(`contract`, contract);
-    console.log(
-      `balance secccccccccccccccccccccccc`,
-      ethers.utils.formatEther(balance)
-    );
-  };
-
-  const getCRDBalance = async () => {
-    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-
-    const balance = await contract
-      .balanceOf(currentAddress)
-      .catch((error: any) => console.warn(`address error`, error));
-    console.log(`contract`, contract);
-    console.log(`balance crd`, ethers.utils.formatEther(balance));
-  };
   const notify = (variant: any) =>
     toast.custom(
       <Toast
@@ -103,7 +51,6 @@ const DashboardPage: FC = () => {
     );
   return (
     <section>
-      {console.log(`balances`, balances)}
       <TopBar
         currentAddress={currentAddress as string}
         accounts={accounts as string[]}
