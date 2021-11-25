@@ -41,6 +41,10 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     );
     console.log(
       `ethers.parseUnits()`,
+      ethers.utils.parseUnits(event as string, "wei")
+    );
+    console.log(
+      `ethers.parseUnits()`,
       ethers.utils.parseEther(event as string)
     );
     // console.log(`event,target.name`, event.target.name);
