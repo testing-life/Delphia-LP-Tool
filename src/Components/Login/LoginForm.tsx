@@ -43,7 +43,7 @@ const LoginForm: FC<any> = () => {
             <InputField
               name="password"
               onChange={(e) => onChange(e)}
-              type="text"
+              type="password"
             >
               Password
             </InputField>

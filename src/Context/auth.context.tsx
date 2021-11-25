@@ -9,6 +9,7 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import { RequestUrl } from "../Consts/requestUrls";
 import { IUser } from "./user.context";
+import jwt_decode from "jwt-decode";
 
 export type AuthContext = {
   login: ({ email, password }: any) => void;
@@ -33,45 +34,17 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
   }, []);
 
   const getLocalUser = async () => {
-    const locallyStoredUser = await localStorage.getItem("user");
-    if (locallyStoredUser) {
-      const localUser = JSON.parse(locallyStoredUser);
-      setState(localUser);
+    const token = await localStorage.getItem("token");
+    if (token) {
+      const needsToLogOut = await isExpired(token);
+      if (needsToLogOut) {
+        logout();
+      } else {
+        const localUser = JSON.parse(token as string);
+        setState(localUser);
+      }
     }
   };
-
-  // try {
-  //   const res = await fetch(`${RequestUrl.BASE_URL}/auth/confirm_email`, {
-  //     method: "POST",
-  //     mode: "cors",
-  //     body: JSON.stringify({
-  //       email,
-  //       password,
-  //       token,
-  //     }),
-  //     headers: {
-  //       "Content-type": "application/json; charset=UTF-8",
-  //     },
-  //   });
-  //   if (res && !res.ok) {
-  //     const data = await res.json();
-  //     const message =
-  //       data.length > 1
-  //         ? data.reduce((acc: any, next: any) => {
-  //             const msg = `${acc.message} ${next.message}`;
-  //             return msg;
-  //           })
-  //         : data[0].message;
-
-  //     throw Error(message);
-  //   }
-  //   if (res.ok) {
-  //     setPassCreated(true);
-  //   }
-  // } catch (error) {
-  //   console.warn(error);
-  //   setError(error as Error);
-  // }
 
   const login = async ({
     email,
@@ -108,12 +81,21 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
         throw Error(message);
       }
       if (res.ok) {
-        // localStorage.setItem("user", JSON.stringify(data[0]));
-        // setState(data[0]);
+        const data = await res.json();
+        localStorage.setItem("token", JSON.stringify(data));
+        setState(data);
       }
     } catch (error) {
       setAuthError(error as Error);
     }
+  };
+
+  const isExpired = async (token: any): Promise<boolean> => {
+    const decoded: { [key: string]: string | number } = jwt_decode(
+      token as string
+    );
+    const currentDate = new Date();
+    return (decoded!.exp as number) * 1000 < currentDate.getTime();
   };
 
   const logout = () => {
