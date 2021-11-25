@@ -16,7 +16,7 @@ interface TopBarProps {
 }
 const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
   const { logout } = useAuth();
-  const { provider } = useEthProvider();
+  const { provider, balances, getBalances } = useEthProvider();
 
   const reconnect = async () => {
     try {
@@ -26,8 +26,13 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
     }
   };
 
+  useEffect(() => {
+    getBalances(currentAddress);
+  }, [currentAddress]);
+
   return (
     <>
+      {console.log(`balances`, balances)}
       <Navigation
         leftAligned={
           <AvatarLink
@@ -45,7 +50,7 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
             ) : null}
             {currentAddress ? (
               <ConnectedWalletDetails
-                balances={{ SEC: 234, ETH: 323, CRD: 0.3242 }}
+                balances={balances}
                 connectedAddress={currentAddress as string}
                 error={addressError}
               />

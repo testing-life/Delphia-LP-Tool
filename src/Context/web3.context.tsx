@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import React, {
   FC,
   createContext,
@@ -6,6 +7,8 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { Tokens } from "../Consts/tokens";
+import { TokenAddresses } from "../Enums/tokensAddresses";
 
 export type TWeb3Context = {
   setProvider: any;
@@ -14,17 +17,26 @@ export type TWeb3Context = {
   signer: any;
   error: Error | undefined;
   accounts: string[] | undefined;
+  balances: TBalances[] | undefined;
+  getBalances: (arg: string) => void;
 };
 
 interface IWeb3Provider {
   children: ReactNode;
 }
 
+export type TTokens = "SEC" | "CRD" | "ETH";
+
+export type TBalances = {
+  [key in TTokens]: string;
+};
+
 const Web3Context = createContext<TWeb3Context>(null!);
 
 const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [provider, setProvider] = useState<any | undefined>(undefined);
   const [signer, setSigner] = useState<any | undefined>(undefined);
+  const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error>();
   const [accounts, setAccounts] = useState<string[]>([]);
 
@@ -56,9 +68,68 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     setAccounts(newAccounts);
   };
 
+  const balanceOfABI = [
+    {
+      inputs: [{ internalType: "address", name: "account", type: "address" }],
+      name: "balanceOf",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+  ];
+
+  const getTokens = async (
+    token: { name: string; address: TokenAddresses },
+    currentAddress: string
+  ) => {
+    const contract = new ethers.Contract(token.address, balanceOfABI, signer);
+    let balance = undefined;
+    try {
+      balance = await contract.balanceOf(currentAddress);
+      if (balance) {
+        return { [token.name]: ethers.utils.formatEther(balance) };
+      }
+    } catch (error) {
+      console.log(`error`, error);
+    }
+  };
+
+  const getBalances = async (currentAddress: string): Promise<void> => {
+    if (!currentAddress) {
+      return;
+    }
+    const resolveTokenRequests = async () => {
+      return Promise.all(
+        Tokens.map((token) => getTokens(token, currentAddress))
+      );
+    };
+
+    resolveTokenRequests().then(async (res) => {
+      const ethBalance = await signer
+        .getBalance()
+        .catch((error: any) => console.warn(`ETH balance error`, error));
+      if (res && ethBalance) {
+        const newBalances = [
+          ...res,
+          { ETH: ethers.utils.formatEther(ethBalance) },
+        ];
+        setBalances(newBalances as TBalances[]);
+      }
+    });
+  };
+
   return (
     <Web3Context.Provider
-      value={{ provider, signer, setProvider, setSigner, error, accounts }}
+      value={{
+        provider,
+        signer,
+        setProvider,
+        setSigner,
+        error,
+        accounts,
+        balances,
+        getBalances,
+      }}
       {...props}
     />
   );
