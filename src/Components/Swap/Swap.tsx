@@ -23,15 +23,20 @@ interface SwapProps {
   to: "SEC" | "CRD";
 }
 
+interface ITxValues {
+  toValue?: BigNumber | undefined;
+  fromValue?: BigNumber | undefined;
+}
+
 interface ReasonError extends Error {
   reason: string;
 }
 const Swap: FC<SwapProps> = ({ from, to }) => {
   const confirmationDialog = useDialog(ConfirmationDialog);
   const [dialogResult, setDialogResult] = useState<any>();
-  const [txValues, setTxValues] = useState<any>(undefined);
+  const [txValues, setTxValues] = useState<ITxValues | undefined>(undefined);
   const [tokenEstimates, setTokenEstimates] = useState<
-    { costEstimate: string; gainEstimate: string } | undefined
+    { costEstimate?: string; gainEstimate?: string } | undefined
   >(undefined);
   const [swapError, setSwapError] = useState<string>();
   const [estimatesError, setEstimatesError] = useState<string>();
@@ -54,6 +59,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
       const res = await contract
         .calculateCurvedMintReturn(val)
         .catch((err: any) => console.log(`err`, err));
+      setTokenEstimates({ gainEstimate: ethers.utils.formatEther(res) });
       console.log(`res gain`, ethers.utils.formatEther(res));
     } catch (error) {
       console.log(`error`, typeof error);
@@ -68,6 +74,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
         .calculateCurvedBurnReturn(val)
         .catch((err: any) => console.log(`err`, err));
       console.log(`res cost`, ethers.utils.formatEther(res));
+      setTokenEstimates({ costEstimate: ethers.utils.formatEther(res) });
     } catch (error) {
       console.log(`error`, error);
       console.log(`error`, typeof error);
@@ -76,7 +83,12 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   };
 
   const onChangeTo = debounce((event: string) => {
+    console.log(`event`, event);
+    if (estimatesError) {
+      setEstimatesError(undefined);
+    }
     if (!event) {
+      setTxValues({ toValue: undefined });
       return;
     }
     const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
@@ -85,7 +97,11 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   }, 250);
 
   const onChangeFrom = debounce((event: string) => {
+    if (estimatesError) {
+      setEstimatesError(undefined);
+    }
     if (!event) {
+      setTxValues({ fromValue: undefined });
       return;
     }
     const fromValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
@@ -95,7 +111,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
 
   return (
     <section className="swap">
-      {console.log(`estimatesError`, estimatesError)}
       <SwapInput label="Swap from">
         <TokenAvatar
           caption={from}
@@ -107,7 +122,11 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           onChange={onChangeFrom}
           placeholder="0.0"
           type="text"
-          value=""
+          value={
+            txValues?.fromValue
+              ? ethers.utils.formatEther(txValues?.fromValue as BigNumber)
+              : ""
+          }
           error={!!estimatesError}
         />
       </SwapInput>
@@ -121,7 +140,11 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           onChange={onChangeTo}
           placeholder="0.0"
           type="text"
-          value=""
+          value={
+            txValues?.toValue
+              ? ethers.utils.formatEther(txValues?.toValue as BigNumber)
+              : ""
+          }
           error={!!estimatesError}
         />
       </SwapInput>
@@ -146,7 +169,12 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
             </ReactTooltip>
           </>
         </SwapSummaryItem>
-        <SwapSummaryItem label="Your receive" value={`0.15 ${to}`}>
+        <SwapSummaryItem
+          label="Your receive"
+          value={`${
+            tokenEstimates?.gainEstimate ? tokenEstimates?.gainEstimate : "0"
+          } ${to}`}
+        >
           <>
             <QuestionMarkCircleIcon
               className="w-6 h-6 text-gray-400 ml-2"
@@ -164,19 +192,21 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           </>
         </SwapSummaryItem>
       </SwapSummary>
-      <p className="text-sm text-gray-600 mb-10 text-right">
-        Enter amount to see calculation
-      </p>
+      {!tokenEstimates && (
+        <p className="text-sm text-gray-600 mb-10 text-right">
+          Enter amount to see calculation
+        </p>
+      )}
       <Button
         variant="primary"
-        disabled={!txValues}
+        disabled={!txValues?.fromValue || !txValues.toValue}
         fullWidth
         classes="mb-4"
         onClick={handleClick}
       >
-        {!txValues ? "Enter Amount" : "Swap"}
+        {!txValues?.fromValue || !txValues.toValue ? "Enter Amount" : "Swap"}
       </Button>
-      {txValues && !estimatesError && (
+      {txValues?.fromValue && txValues?.toValue && !estimatesError && (
         <p className="text-sm text-center font-medium text-gray-600">
           Click Swap to preview transaction.
         </p>
