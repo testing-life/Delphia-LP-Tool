@@ -10,7 +10,7 @@ export interface InputFieldProps {
   name: string;
   disabled?: boolean;
   placeholder?: string;
-  onChange: (e: any) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputField: FC<InputFieldProps> = ({
@@ -34,7 +34,7 @@ const InputField: FC<InputFieldProps> = ({
         inputMode={type === "number" ? "decimal" : "text"}
         placeholder={placeholder}
         className="input__field"
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => onChange(event)}
       />
       {error && !!(error as string).length && (
         <div className="input__validation">
