@@ -8,12 +8,22 @@ import Toast from "../../Components/Molecules/Toast/Toast";
 import Tabs from "../../Components/Molecules/Tabs/Tabs";
 import Tab from "../../Components/Molecules/Tab/Tab";
 import Swap from "../../Components/Swap/Swap";
+import { ethers } from "ethers";
+import SwapApproval from "../../Components/Organisms/SwapApproval/SwapApproval";
+import {
+  crdApprovalConfig,
+  IApprovalConfig,
+  secApprovalConfig,
+} from "../../Consts/approvalConfig";
+import { TokenAddresses } from "../../Enums/tokensAddresses";
 
 const DashboardPage: FC = () => {
   const user = useUser();
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
   const { accounts, signer } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
+  const [isSECapproved, setIsSECapproved] = useState<boolean>(false);
+  const [isCRDapproved, setIsCRDapproved] = useState<boolean>(false);
 
   useEffect(() => {
     setAddressError(false);
@@ -30,6 +40,18 @@ const DashboardPage: FC = () => {
         currentAddress as string
       );
       setAddressError(!isRegistered);
+      const secConfig: IApprovalConfig = {
+        ...secApprovalConfig,
+        account: currentAddress,
+        signer,
+      };
+      const crdConfig: IApprovalConfig = {
+        ...crdApprovalConfig,
+        account: currentAddress,
+        signer,
+      };
+      getIsApproved(secConfig);
+      getIsApproved(crdConfig);
     }
   }, [currentAddress]);
 
@@ -38,6 +60,24 @@ const DashboardPage: FC = () => {
       .getAddress()
       .catch((error: any) => console.warn(`address error`, error));
     setCurrentAddress(address);
+  };
+
+  const getIsApproved = async (args: IApprovalConfig) => {
+    const { owner, abi, account, spender } = args;
+    const contract = new ethers.Contract(owner, abi, signer);
+    try {
+      const res = await contract
+        .allowance(currentAddress, spender)
+        .catch((err: any) => console.log(`err`, err));
+      if (owner === TokenAddresses.SEC) {
+        setIsSECapproved(res.gt(0));
+      }
+      if (owner === TokenAddresses.CRD) {
+        setIsCRDapproved(res.gt(0));
+      }
+    } catch (error) {
+      console.log(`error`, error);
+    }
   };
 
   const notify = (variant: any) =>
@@ -76,12 +116,20 @@ const DashboardPage: FC = () => {
           <Tabs labels={["Swap SEC", "Swap CRD"]}>
             <Tab>
               <Card>
-                <Swap from="SEC" to="CRD" />
+                {isSECapproved ? (
+                  <Swap from="SEC" to="CRD" />
+                ) : (
+                  <SwapApproval token="SEC" />
+                )}
               </Card>
             </Tab>
             <Tab>
               <Card>
-                <Swap from="CRD" to="SEC" />
+                {isCRDapproved ? (
+                  <Swap from="CRD" to="SEC" />
+                ) : (
+                  <SwapApproval token="CRD" />
+                )}
               </Card>
             </Tab>
           </Tabs>
