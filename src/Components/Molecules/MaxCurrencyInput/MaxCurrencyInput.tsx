@@ -4,6 +4,7 @@ import Input, { InputFieldProps } from "../../Atoms/Input/Input";
 import isNumeric from "validator/lib/isNumeric";
 import trim from "validator/lib/trim";
 import "./MaxCurrencyInput.css";
+import isEmail from "validator/lib/isEmail";
 
 export interface MaxCurrencyInputProps extends InputFieldProps {
   value: string;
@@ -24,15 +25,22 @@ const MaxCurrencyInput: FC<MaxCurrencyInputProps> = ({
   const maximiseValue = () => maxValue && setState(maxValue);
 
   useEffect(() => {
+    console.log(`name, state useeffect`, name, state);
     onChange(state);
   }, [state]);
 
-  const validateInput = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    if (isNaN(Number(value)) && !isNumeric(value) && value !== ".") {
+  useEffect(() => {
+    console.log(`name, state value`, name, value);
+    if (value && state !== value) {
+      validateInput(value);
+    }
+  }, [value]);
+
+  const validateInput = (val: string) => {
+    if (isNaN(Number(val)) && !isNumeric(val) && val !== ".") {
       return false;
     }
-    let newValue = trim(value);
+    let newValue = trim(val);
     if (newValue === ".") {
       newValue = "0.";
     }

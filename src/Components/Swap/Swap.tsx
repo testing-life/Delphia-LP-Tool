@@ -38,6 +38,9 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   const [tokenEstimates, setTokenEstimates] = useState<
     { costEstimate?: string; gainEstimate?: string } | undefined
   >(undefined);
+  const [top, setTop] = useState<any>("");
+  const [bottom, setBottom] = useState<any>("");
+  // const [bottomInput, setBottomInput] = useState<any>("");
   const [swapError, setSwapError] = useState<string>();
   const [estimatesError, setEstimatesError] = useState<string>();
   const { balances, signer } = useEthProvider();
@@ -59,8 +62,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
       const res = await contract
         .calculateCurvedMintReturn(val)
         .catch((err: any) => console.log(`err`, err));
-      setTokenEstimates({ gainEstimate: ethers.utils.formatEther(res) });
-      console.log(`res gain`, ethers.utils.formatEther(res));
+      return res;
     } catch (error) {
       console.log(`error`, typeof error);
       setEstimatesError((error as ReasonError).reason);
@@ -73,41 +75,50 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
       const res = await contract
         .calculateCurvedBurnReturn(val)
         .catch((err: any) => console.log(`err`, err));
-      console.log(`res cost`, ethers.utils.formatEther(res));
-      setTokenEstimates({ costEstimate: ethers.utils.formatEther(res) });
+      return res;
+      // setTokenEstimates({ costEstimate: ethers.utils.formatEther(res) });
     } catch (error) {
-      console.log(`error`, error);
-      console.log(`error`, typeof error);
       setEstimatesError((error as ReasonError).reason);
     }
   };
 
-  const onChangeTo = debounce((event: string) => {
-    console.log(`event`, event);
+  const onChangeTo = debounce(async (event: string) => {
+    console.log(`TO event,top,bottom`, event, top, bottom);
+    if (event === bottom) {
+      return;
+    }
     if (estimatesError) {
       setEstimatesError(undefined);
     }
+    // setTop("");
+    // setBottom("");
     if (!event) {
-      setTxValues({ toValue: undefined });
+      // setTxValues({ toValue: undefined });
       return;
     }
     const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
-    setTxValues({ toValue });
-    estimateTokenCost(toValue);
-  }, 250);
+    const estimate = await estimateTokenCost(toValue);
+    setTop(ethers.utils.formatEther(estimate));
+  }, 500);
 
-  const onChangeFrom = debounce((event: string) => {
+  const onChangeFrom = debounce(async (event: string) => {
+    console.log(`FROM event,top,bottom`, event, top, bottom);
+    if (event === top) {
+      return;
+    }
     if (estimatesError) {
       setEstimatesError(undefined);
     }
+    setTop("");
+    setBottom("");
     if (!event) {
-      setTxValues({ fromValue: undefined });
+      // setTxValues({ fromValue: undefined });
       return;
     }
     const fromValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
-    estimateTokenGain(fromValue);
-    setTxValues({ fromValue });
-  }, 250);
+    const estimate = await estimateTokenGain(fromValue);
+    setBottom(ethers.utils.formatEther(estimate));
+  }, 500);
 
   return (
     <section className="swap">
@@ -122,11 +133,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           onChange={onChangeFrom}
           placeholder="0.0"
           type="text"
-          value={
-            txValues?.fromValue
-              ? ethers.utils.formatEther(txValues?.fromValue as BigNumber)
-              : ""
-          }
+          value={top}
           error={!!estimatesError}
         />
       </SwapInput>
@@ -140,11 +147,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           onChange={onChangeTo}
           placeholder="0.0"
           type="text"
-          value={
-            txValues?.toValue
-              ? ethers.utils.formatEther(txValues?.toValue as BigNumber)
-              : ""
-          }
+          value={bottom}
           error={!!estimatesError}
         />
       </SwapInput>
