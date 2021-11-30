@@ -83,45 +83,34 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   };
 
   const onChangeTo = debounce(async (event: string) => {
-    console.log(`TO event,top,bottom`, event, top, bottom);
-    if (event === bottom) {
-      return;
-    }
     if (estimatesError) {
       setEstimatesError(undefined);
     }
-    // setTop("");
-    // setBottom("");
-    if (!event) {
-      // setTxValues({ toValue: undefined });
+    if (!event || event === bottom) {
       return;
     }
     const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
+    setTxValues({ toValue });
     const estimate = await estimateTokenCost(toValue);
     setTop(ethers.utils.formatEther(estimate));
   }, 500);
 
   const onChangeFrom = debounce(async (event: string) => {
-    console.log(`FROM event,top,bottom`, event, top, bottom);
-    if (event === top) {
-      return;
-    }
     if (estimatesError) {
       setEstimatesError(undefined);
     }
-    setTop("");
-    setBottom("");
-    if (!event) {
-      // setTxValues({ fromValue: undefined });
+    if (!event || event === top) {
       return;
     }
     const fromValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
+    setTxValues({ fromValue });
     const estimate = await estimateTokenGain(fromValue);
     setBottom(ethers.utils.formatEther(estimate));
   }, 500);
 
   return (
     <section className="swap">
+      {console.log(`object`, txValues)}
       <SwapInput label="Swap from">
         <TokenAvatar
           caption={from}
@@ -174,9 +163,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
         </SwapSummaryItem>
         <SwapSummaryItem
           label="Your receive"
-          value={`${
-            tokenEstimates?.gainEstimate ? tokenEstimates?.gainEstimate : "0"
-          } ${to}`}
+          value={`${bottom ? bottom : "0"} ${to}`}
         >
           <>
             <QuestionMarkCircleIcon
@@ -195,7 +182,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           </>
         </SwapSummaryItem>
       </SwapSummary>
-      {!tokenEstimates && (
+      {!bottom && !top && (
         <p className="text-sm text-gray-600 mb-10 text-right">
           Enter amount to see calculation
         </p>
