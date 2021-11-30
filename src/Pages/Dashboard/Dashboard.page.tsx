@@ -5,6 +5,9 @@ import { IUser, useUser } from "../../Context/user.context";
 import { useEthProvider } from "../../Context/web3.context";
 import toast, { Toaster } from "react-hot-toast";
 import Toast from "../../Components/Molecules/Toast/Toast";
+import Tabs from "../../Components/Molecules/Tabs/Tabs";
+import Tab from "../../Components/Molecules/Tab/Tab";
+import Swap from "../../Components/Swap/Swap";
 
 const DashboardPage: FC = () => {
   const user = useUser();
@@ -36,6 +39,7 @@ const DashboardPage: FC = () => {
       .catch((error: any) => console.warn(`address error`, error));
     setCurrentAddress(address);
   };
+
   const notify = (variant: any) =>
     toast.custom(
       <Toast
@@ -52,10 +56,10 @@ const DashboardPage: FC = () => {
         accounts={accounts as string[]}
         addressError={addressError}
       />
-      <br />
+      {/* <br />
       <button onClick={() => notify("error")}>toast</button>
       <br />
-      <button onClick={() => notify("success")}>toast succ</button>
+      <button onClick={() => notify("success")}>toast succ</button> */}
       <div className="bg-gray-800 text-gray-900 flex h-screen justify-center items-start pt-28 relative">
         {addressError && (
           <Card>
@@ -67,6 +71,20 @@ const DashboardPage: FC = () => {
               Please connect a registered wallet to swap tokens.
             </p>
           </Card>
+        )}
+        {!addressError && (
+          <Tabs labels={["Swap SEC", "Swap CRD"]}>
+            <Tab>
+              <Card>
+                <Swap from="SEC" to="CRD" />
+              </Card>
+            </Tab>
+            <Tab>
+              <Card>
+                <Swap from="CRD" to="SEC" />
+              </Card>
+            </Tab>
+          </Tabs>
         )}
         <Toaster
           position="top-right"

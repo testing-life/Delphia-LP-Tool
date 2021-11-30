@@ -1,9 +1,10 @@
 import React, { FC } from "react";
+import { TBalances, TTokens } from "../../../Context/web3.context";
 import "./ConnectedWalletDetails.css";
 
 export interface ConnectedWalletDetailsProps {
   error?: boolean;
-  balances: { [key: string]: number };
+  balances: TBalances[] | undefined;
   connectedAddress: string;
 }
 
@@ -20,12 +21,11 @@ const ConnectedWalletDetails: FC<ConnectedWalletDetailsProps> = ({
     >
       {!error &&
         balances &&
-        Object.entries(balances).map((balance) => {
-          const token = balance[0];
-          const value = balance[1];
+        balances.map((balance: { [key: string]: string }) => {
+          const key = Object.keys(balance)[0];
           return (
             <span className="connectedWalletDetails__tokenDetails">
-              {token} {value}
+              {key} {balance[key as TTokens]}
             </span>
           );
         })}

@@ -5,7 +5,9 @@ export interface SwapSummaryProps {
 const SwapSummary: FC<SwapSummaryProps> = ({ children }) => {
   const count = Children.count(children);
   return (
-    <dl>{count > 1 ? (children as []).map((child) => child) : children}</dl>
+    <dl className="swapSummary">
+      {count > 1 ? (children as []).map((child) => child) : children}
+    </dl>
   );
 };
 

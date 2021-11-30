@@ -1,8 +1,8 @@
-import React, { FC, FormEvent, ReactNode } from "react";
+import React, { FC, FormEvent, FormEventHandler, ReactNode } from "react";
 
 interface IForm {
   children: ReactNode;
-  onSubmit: (event: FormEvent) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
 const Form: FC<IForm> = ({ children, onSubmit }) => {

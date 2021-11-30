@@ -1,6 +1,6 @@
 @layer components {
   .swapSummaryItem {
-    @apply text-gray-900 text-base flex justify-between;
+    @apply text-gray-900 text-base flex justify-between mb-3;
   }
 
   .swapSummaryItem__label {
