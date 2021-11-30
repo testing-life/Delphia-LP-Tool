@@ -76,7 +76,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
         .calculateCurvedBurnReturn(val)
         .catch((err: any) => console.log(`err`, err));
       return res;
-      // setTokenEstimates({ costEstimate: ethers.utils.formatEther(res) });
     } catch (error) {
       setEstimatesError((error as ReasonError).reason);
     }
@@ -86,7 +85,11 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     if (estimatesError) {
       setEstimatesError(undefined);
     }
-    if (!event || event === bottom) {
+    if (event === bottom) {
+      return;
+    }
+    if (!event) {
+      setTxValues(undefined);
       return;
     }
     const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
@@ -99,9 +102,15 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     if (estimatesError) {
       setEstimatesError(undefined);
     }
-    if (!event || event === top) {
+    if (event === top) {
       return;
     }
+
+    if (!event) {
+      setTxValues(undefined);
+      return;
+    }
+
     const fromValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
     setTxValues({ fromValue });
     const estimate = await estimateTokenGain(fromValue);
@@ -189,14 +198,14 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
       )}
       <Button
         variant="primary"
-        disabled={!txValues?.fromValue || !txValues.toValue}
+        disabled={!txValues}
         fullWidth
         classes="mb-4"
         onClick={handleClick}
       >
-        {!txValues?.fromValue || !txValues.toValue ? "Enter Amount" : "Swap"}
+        {!txValues ? "Enter Amount" : "Swap"}
       </Button>
-      {txValues?.fromValue && txValues?.toValue && !estimatesError && (
+      {txValues && !estimatesError && (
         <p className="text-sm text-center font-medium text-gray-600">
           Click Swap to preview transaction.
         </p>
