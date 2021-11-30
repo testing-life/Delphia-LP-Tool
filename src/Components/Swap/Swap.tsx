@@ -1,11 +1,10 @@
 import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { BigNumber } from "ethers";
 import { ethers } from "ethers";
-import React, { ChangeEvent, FC, useState } from "react";
+import React, { FC, useState } from "react";
 import { useDialog } from "react-dialog-async";
 import ReactTooltip from "react-tooltip";
 import { CRDabi } from "../../ABI/CRDabi";
-import { Tokens } from "../../Consts/tokens";
 import { TBalances, TTokens, useEthProvider } from "../../Context/web3.context";
 import { TokenAddresses } from "../../Enums/tokensAddresses";
 import debounce from "../../Utils/debounce";
@@ -35,15 +34,11 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   const confirmationDialog = useDialog(ConfirmationDialog);
   const [dialogResult, setDialogResult] = useState<any>();
   const [txValues, setTxValues] = useState<ITxValues | undefined>(undefined);
-  const [tokenEstimates, setTokenEstimates] = useState<
-    { costEstimate?: string; gainEstimate?: string } | undefined
-  >(undefined);
   const [top, setTop] = useState<any>("");
   const [bottom, setBottom] = useState<any>("");
-  // const [bottomInput, setBottomInput] = useState<any>("");
-  const [swapError, setSwapError] = useState<string>();
   const [estimatesError, setEstimatesError] = useState<string>();
   const { balances, signer } = useEthProvider();
+
   const handleClick = async () => {
     const response = await confirmationDialog
       .show({})
@@ -85,13 +80,16 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     if (estimatesError) {
       setEstimatesError(undefined);
     }
+
     if (event === bottom) {
       return;
     }
+
     if (!event) {
       setTxValues(undefined);
       return;
     }
+
     const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
     setTxValues({ toValue });
     const estimate = await estimateTokenCost(toValue);
@@ -102,6 +100,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     if (estimatesError) {
       setEstimatesError(undefined);
     }
+
     if (event === top) {
       return;
     }
@@ -119,7 +118,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
 
   return (
     <section className="swap">
-      {console.log(`object`, txValues)}
       <SwapInput label="Swap from">
         <TokenAvatar
           caption={from}
