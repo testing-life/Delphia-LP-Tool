@@ -84,7 +84,7 @@ const ConfirmationDialog: React.FC<
               <Button
                 variant="primary"
                 fullWidth
-                onClick={() => handleClose(false)}
+                onClick={() => handleClose(true)}
               >
                 Confirm
               </Button>

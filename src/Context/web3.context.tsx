@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import React, {
   FC,
   createContext,
@@ -7,6 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { SECabi } from "../ABI/SECabi";
 import { Tokens } from "../Consts/tokens";
 import { TokenAddresses } from "../Enums/tokensAddresses";
 
@@ -19,6 +20,12 @@ export type TWeb3Context = {
   accounts: string[] | undefined;
   balances: TBalances[] | undefined;
   getBalances: (arg: string) => void;
+  getApprovalEstimate: () => Promise<BigNumber>;
+  approveSwapping: (
+    source: TokenAddresses,
+    spender: TokenAddresses,
+    abi: any
+  ) => Promise<BigNumber>;
 };
 
 interface IWeb3Provider {
@@ -118,6 +125,22 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     });
   };
 
+  const getApprovalEstimate = async (): Promise<BigNumber> => {
+    const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
+    const amount = Number.MAX_SAFE_INTEGER - 1;
+    return await contract.estimateGas.approve(TokenAddresses.CRD, amount);
+  };
+
+  const approveSwapping = async (
+    source: TokenAddresses,
+    spender: TokenAddresses,
+    abi: any
+  ): Promise<BigNumber> => {
+    const contract = new ethers.Contract(source, abi, signer);
+    const amount = Number.MAX_SAFE_INTEGER - 1;
+    return await contract.approve(spender, amount);
+  };
+
   return (
     <Web3Context.Provider
       value={{
@@ -129,6 +152,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         accounts,
         balances,
         getBalances,
+        getApprovalEstimate,
+        approveSwapping,
       }}
       {...props}
     />
