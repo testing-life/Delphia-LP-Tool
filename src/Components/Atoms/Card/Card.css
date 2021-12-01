@@ -3,4 +3,8 @@
     width: 36rem;
     @apply bg-white py-14 px-20 rounded-2xl;
   }
+
+  .card--grey {
+    @apply bg-gray-50 border w-full border-gray-200 px-6 py-5;
+  }
 }

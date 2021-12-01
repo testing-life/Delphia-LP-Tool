@@ -1,10 +1,14 @@
 @layer components {
-  .swapApproval {
+  .swapApprovalDialog {
+    @apply absolute inset-0 flex items-start justify-center;
   }
-  .heading {
-    @apply text-2xl font-semibold mb-5;
+
+  .swapApprovalDialog__contentWrapper {
+    margin-top: 11rem;
+    @apply relative mx-auto z-10;
   }
-  .para {
-    @apply text-base font-normal mb-12;
+
+  .swapApprovalDialog__backdrop {
+    @apply absolute w-full h-full bg-black bg-opacity-20;
   }
 }
