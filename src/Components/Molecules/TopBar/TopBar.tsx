@@ -32,7 +32,6 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
 
   return (
     <>
-      {console.log(`balances`, balances)}
       <Navigation
         leftAligned={
           <AvatarLink

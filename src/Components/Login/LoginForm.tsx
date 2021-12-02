@@ -31,7 +31,6 @@ const LoginForm: FC<any> = () => {
 
   return (
     <div className="max-w-lg mx-auto">
-      {console.log(`object`, credentials)}
       <Form onSubmit={onSubmit}>
         <ul>
           <li className="mb-6">

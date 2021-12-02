@@ -26,11 +26,11 @@
   }
 
   .input__validation--error .input__field {
-    @apply border-red-500 mb-2 text-red-500 border-2 bg-red-50 placeholder-red-300 focus:ring-red-200 focus:ring-2;
+    @apply border-red-500 text-red-500 border-2 bg-red-50 placeholder-red-300 focus:ring-red-200 focus:ring-2;
   }
 
   .input__validation {
-    @apply text-sm inline-flex items-center;
+    @apply text-sm inline-flex  mb-2 items-center;
   }
 
   .input__validation--error .input__field:focus-visible {

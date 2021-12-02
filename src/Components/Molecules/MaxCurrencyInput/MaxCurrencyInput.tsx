@@ -17,6 +17,7 @@ const MaxCurrencyInput: FC<MaxCurrencyInputProps> = ({
   value,
   name,
   disabled = false,
+  error = false,
   onChange,
 }) => {
   const [state, setState] = useState<string>(value);
@@ -26,12 +27,23 @@ const MaxCurrencyInput: FC<MaxCurrencyInputProps> = ({
     onChange(state);
   }, [state]);
 
-  const validateInput = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    if (isNaN(Number(value)) && !isNumeric(value) && value !== ".") {
+  useEffect(() => {
+    if (value && state !== value) {
+      validateInput(value);
+    }
+  }, [value]);
+
+  const validateInput = (val: string | ChangeEvent<HTMLInputElement>) => {
+    let value = null;
+    if (typeof val === "string") {
+      value = val;
+    } else if (Object.keys(val).includes("target")) {
+      value = val.target.value;
+    }
+    if (isNaN(Number(value)) && !isNumeric(value as string) && value !== ".") {
       return false;
     }
-    let newValue = trim(value);
+    let newValue = trim(value as string);
     if (newValue === ".") {
       newValue = "0.";
     }
@@ -44,6 +56,7 @@ const MaxCurrencyInput: FC<MaxCurrencyInputProps> = ({
         value={state}
         disabled={disabled}
         type="text"
+        error={error}
         name={name}
         placeholder="0.0"
         onChange={validateInput}

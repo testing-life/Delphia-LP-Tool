@@ -2,13 +2,13 @@ import React from "react";
 import { AsyncDialogProps } from "react-dialog-async";
 import Button from "../../Atoms/Button/Button";
 
-interface SwapSummaryDialogProps {
+interface ConfirmationDialogData {
   title?: string;
   message?: string;
 }
 
 const ConfirmationDialog: React.FC<
-  AsyncDialogProps<SwapSummaryDialogProps, boolean>
+  AsyncDialogProps<ConfirmationDialogData, boolean>
 > = ({ open, handleClose }) => {
   return (
     <>
