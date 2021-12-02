@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, BigNumberish, ethers } from "ethers";
 import React, {
   FC,
   createContext,
