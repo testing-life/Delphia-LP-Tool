@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { useDialog } from "react-dialog-async";
+import { useNavigate } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import { CRDabi } from "../../../ABI/CRDabi";
 import { SECabi } from "../../../ABI/SECabi";
@@ -15,7 +16,8 @@ export interface SwapApprovalProps {
 }
 const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
   const confirmationDialog = useDialog(SwapApprovalDialog);
-  const [dialogResult, setDialogResult] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   const { getApprovalEstimate, approveSwapping } = useEthProvider();
 
   const otherToken = Tokens.find(({ name }) => name !== token)?.name;
@@ -25,11 +27,11 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
     );
 
     if (gasEstimate) {
+      setIsLoading(true);
       const response = await confirmationDialog
         .show({ token, otherToken, gasEstimate })
         .catch((e) => console.log(`dialog error`, e));
       if (response) {
-        // setDialogResult(response);
         let approval = null;
         if (token === "SEC") {
           approval = await approveSwapping(
@@ -47,6 +49,7 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
           ).catch((e) => console.log(`approval error`, e));
         }
         if (approval) {
+          setIsLoading(false);
           window.location.reload();
         }
       }
@@ -75,9 +78,15 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
           </span>
         </ReactTooltip>
       </p>
-      <Button fullWidth variant="primary" onClick={handleClick}>
+      <Button
+        loading={isLoading}
+        fullWidth
+        variant="primary"
+        onClick={handleClick}
+      >
         Continue
       </Button>
+
       <p className="text-gray-600 text-sm text-center mt-4">
         We will only ask you to do this once.
       </p>
