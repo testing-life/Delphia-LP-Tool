@@ -4,9 +4,12 @@ import { ethers } from "ethers";
 import React, { FC, useState } from "react";
 import { useDialog } from "react-dialog-async";
 import ReactTooltip from "react-tooltip";
-import { CRDabi } from "../../ABI/CRDabi";
-import { TBalances, TTokens, useEthProvider } from "../../Context/web3.context";
-import { TokenAddresses } from "../../Enums/tokensAddresses";
+import {
+  ReasonError,
+  TBalances,
+  TTokens,
+  useEthProvider,
+} from "../../Context/web3.context";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
 import TokenAvatar from "../Atoms/TokenAvatar/TokenAvatar";
@@ -27,9 +30,6 @@ interface ITxValues {
   fromValue?: BigNumber | undefined;
 }
 
-interface ReasonError extends Error {
-  reason: string;
-}
 const Swap: FC<SwapProps> = ({ from, to }) => {
   const confirmationDialog = useDialog(ConfirmationDialog);
   const [dialogResult, setDialogResult] = useState<any>();
@@ -37,43 +37,18 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   const [top, setTop] = useState<any>("");
   const [bottom, setBottom] = useState<any>("");
   const [estimatesError, setEstimatesError] = useState<string>();
-  const { balances, signer } = useEthProvider();
+  const {
+    balances,
+    estimateTokenGain,
+    estimateTokenCost,
+    getMaxAllowance,
+  } = useEthProvider();
 
   const handleClick = async () => {
     const response = await confirmationDialog
       .show({})
       .catch((e) => console.log(`e`, e));
     setDialogResult(response);
-  };
-
-  const getMax = (balances: TBalances[], from: TTokens): string => {
-    const fromMaxValue = balances?.find((balance) => balance[from]);
-    return fromMaxValue ? fromMaxValue[from] : "0";
-  };
-
-  const estimateTokenGain = async (val: BigNumber) => {
-    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-    try {
-      const res = await contract
-        .calculateCurvedMintReturn(val)
-        .catch((err: any) => console.log(`err`, err));
-      return res;
-    } catch (error) {
-      console.log(`error`, typeof error);
-      setEstimatesError((error as ReasonError).reason);
-    }
-  };
-
-  const estimateTokenCost = async (val: BigNumber) => {
-    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-    try {
-      const res = await contract
-        .calculateCurvedBurnReturn(val)
-        .catch((err: any) => console.log(`err`, err));
-      return res;
-    } catch (error) {
-      setEstimatesError((error as ReasonError).reason);
-    }
   };
 
   const onChangeTo = debounce(async (event: string) => {
@@ -92,8 +67,12 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
 
     const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
     setTxValues({ toValue });
-    const estimate = await estimateTokenCost(toValue);
-    setTop(ethers.utils.formatEther(estimate));
+    const estimate = await estimateTokenCost(toValue).catch((error) => {
+      setEstimatesError((error as ReasonError).reason);
+    });
+    if (estimate) {
+      setTop(ethers.utils.formatEther(estimate));
+    }
   }, 500);
 
   const onChangeFrom = debounce(async (event: string) => {
@@ -112,8 +91,12 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
 
     const fromValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
     setTxValues({ fromValue });
-    const estimate = await estimateTokenGain(fromValue);
-    setBottom(ethers.utils.formatEther(estimate));
+    const estimate = await estimateTokenGain(fromValue).catch((error) => {
+      setEstimatesError((error as ReasonError).reason);
+    });
+    if (estimate) {
+      setBottom(ethers.utils.formatEther(estimate));
+    }
   }, 500);
 
   return (
@@ -124,7 +107,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           imgSrc="https://upload.wikimedia.org/wikipedia/commons/b/be/Ecosia-like_logo.svg"
         />
         <MaxCurrencyInput
-          maxValue={balances && getMax(balances, from)}
+          maxValue={balances && getMaxAllowance(balances, from)}
           name="from"
           onChange={onChangeFrom}
           placeholder="0.0"

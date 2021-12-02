@@ -7,6 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { CRDabi } from "../ABI/CRDabi";
 import { SECabi } from "../ABI/SECabi";
 import { Tokens } from "../Consts/tokens";
 import { TokenAddresses } from "../Enums/tokensAddresses";
@@ -16,10 +17,13 @@ export type TWeb3Context = {
   setSigner: any;
   provider: any;
   signer: any;
-  error: Error | undefined;
+  error: Error | undefined | string;
   accounts: string[] | undefined;
   balances: TBalances[] | undefined;
   getBalances: (arg: string) => void;
+  estimateTokenGain: (arg: BigNumber) => Promise<BigNumberish>;
+  estimateTokenCost: (arg: BigNumber) => Promise<BigNumberish>;
+  getMaxAllowance: (arg1: TBalances[], arg2: TTokens) => string;
   getApprovalEstimate: () => Promise<BigNumber>;
   approveSwapping: (
     source: TokenAddresses,
@@ -30,6 +34,10 @@ export type TWeb3Context = {
 
 interface IWeb3Provider {
   children: ReactNode;
+}
+
+export interface ReasonError extends Error {
+  reason: string;
 }
 
 export type TTokens = "SEC" | "CRD" | "ETH";
@@ -44,7 +52,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [provider, setProvider] = useState<any | undefined>(undefined);
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
-  const [error, setError] = useState<Error>();
+  const [error, setError] = useState<Error | string>();
   const [accounts, setAccounts] = useState<string[]>([]);
 
   useEffect(() => {
@@ -125,6 +133,21 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     });
   };
 
+  const getMaxAllowance = (balances: TBalances[], from: TTokens): string => {
+    const fromMaxValue = balances?.find((balance) => balance[from]);
+    return fromMaxValue ? fromMaxValue[from] : "0";
+  };
+
+  const estimateTokenGain = async (val: BigNumber): Promise<BigNumberish> => {
+    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
+    return await contract.calculateCurvedMintReturn(val);
+  };
+
+  const estimateTokenCost = async (val: BigNumber): Promise<BigNumberish> => {
+    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
+    return await contract.calculateCurvedBurnReturn(val);
+  };
+
   const getApprovalEstimate = async (): Promise<BigNumber> => {
     const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
     const amount = Number.MAX_SAFE_INTEGER - 1;
@@ -152,6 +175,9 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         accounts,
         balances,
         getBalances,
+        estimateTokenGain,
+        estimateTokenCost,
+        getMaxAllowance,
         getApprovalEstimate,
         approveSwapping,
       }}
