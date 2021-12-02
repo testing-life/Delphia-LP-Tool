@@ -16,7 +16,7 @@ interface TopBarProps {
 }
 const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
   const { logout } = useAuth();
-  const { provider, balances, getBalances } = useEthProvider();
+  const { provider, balances, getBalances, pending } = useEthProvider();
 
   const reconnect = async () => {
     try {
@@ -41,10 +41,10 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
         }
         rightAligned={
           <>
-            {currentAddress && !addressError ? (
+            {currentAddress && !addressError && pending.length ? (
               <TransactionStatusLink
                 path="https://ecosia.org"
-                transactionCount={4}
+                transactionCount={pending.length}
               />
             ) : null}
             {currentAddress ? (

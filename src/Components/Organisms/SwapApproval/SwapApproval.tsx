@@ -1,6 +1,9 @@
-import React, { FC, useEffect, useState } from "react";
+import {
+  TransactionReceipt,
+  TransactionResponse,
+} from "@ethersproject/providers";
+import React, { FC, useState } from "react";
 import { useDialog } from "react-dialog-async";
-import { useNavigate } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import { CRDabi } from "../../../ABI/CRDabi";
 import { SECabi } from "../../../ABI/SECabi";
@@ -17,8 +20,13 @@ export interface SwapApprovalProps {
 const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
   const confirmationDialog = useDialog(SwapApprovalDialog);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const navigate = useNavigate();
-  const { getApprovalEstimate, approveSwapping } = useEthProvider();
+  const {
+    getApprovalEstimate,
+    approveSwapping,
+    provider,
+    addToPending,
+    removeFromPending,
+  } = useEthProvider();
 
   const otherToken = Tokens.find(({ name }) => name !== token)?.name;
   const handleClick = async () => {
@@ -32,7 +40,8 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
         .show({ token, otherToken, gasEstimate })
         .catch((e) => console.log(`dialog error`, e));
       if (response) {
-        let approval = null;
+        setIsLoading(true);
+        let approval: TransactionResponse | null | void = null;
         if (token === "SEC") {
           approval = await approveSwapping(
             TokenAddresses.SEC,
@@ -49,8 +58,15 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
           ).catch((e) => console.log(`approval error`, e));
         }
         if (approval) {
-          setIsLoading(false);
-          window.location.reload();
+          addToPending(approval);
+          const receipt: TransactionReceipt = await provider.waitForTransaction(
+            approval.hash
+          );
+          if (receipt) {
+            removeFromPending(receipt);
+            setIsLoading(false);
+            window.location.reload();
+          }
         }
       }
     }
