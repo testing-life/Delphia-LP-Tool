@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from "react";
 import { CRDabi } from "../ABI/CRDabi";
+import { SECabi } from "../ABI/SECabi";
 import { Tokens } from "../Consts/tokens";
 import { TokenAddresses } from "../Enums/tokensAddresses";
 
@@ -23,6 +24,12 @@ export type TWeb3Context = {
   estimateTokenGain: (arg: BigNumber) => Promise<BigNumberish>;
   estimateTokenCost: (arg: BigNumber) => Promise<BigNumberish>;
   getMaxAllowance: (arg1: TBalances[], arg2: TTokens) => string;
+  getApprovalEstimate: () => Promise<BigNumber>;
+  approveSwapping: (
+    source: TokenAddresses,
+    spender: TokenAddresses,
+    abi: any
+  ) => Promise<BigNumber>;
 };
 
 interface IWeb3Provider {
@@ -141,6 +148,22 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     return await contract.calculateCurvedBurnReturn(val);
   };
 
+  const getApprovalEstimate = async (): Promise<BigNumber> => {
+    const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
+    const amount = Number.MAX_SAFE_INTEGER - 1;
+    return await contract.estimateGas.approve(TokenAddresses.CRD, amount);
+  };
+
+  const approveSwapping = async (
+    source: TokenAddresses,
+    spender: TokenAddresses,
+    abi: any
+  ): Promise<BigNumber> => {
+    const contract = new ethers.Contract(source, abi, signer);
+    const amount = Number.MAX_SAFE_INTEGER - 1;
+    return await contract.approve(spender, amount);
+  };
+
   return (
     <Web3Context.Provider
       value={{
@@ -155,6 +178,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         estimateTokenGain,
         estimateTokenCost,
         getMaxAllowance,
+        getApprovalEstimate,
+        approveSwapping,
       }}
       {...props}
     />
