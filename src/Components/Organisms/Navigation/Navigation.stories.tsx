@@ -26,7 +26,7 @@ const Template: Story = (args) => (
       rightAligned={
         <>
           <TransactionStatusLink
-            path="https://ecosia.org"
+            onClick={() => console.log(`clicked`)}
             transactionCount={4}
           />
           <ConnectedWalletDetails

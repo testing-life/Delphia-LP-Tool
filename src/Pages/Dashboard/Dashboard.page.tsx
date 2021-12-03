@@ -20,7 +20,7 @@ import { TokenAddresses } from "../../Enums/tokensAddresses";
 const DashboardPage: FC = () => {
   const user = useUser();
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const { accounts, signer } = useEthProvider();
+  const { accounts, signer, disproveSwapping, provider } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
   const [isSECapproved, setIsSECapproved] = useState<boolean>(false);
   const [isCRDapproved, setIsCRDapproved] = useState<boolean>(false);
@@ -140,7 +140,7 @@ const DashboardPage: FC = () => {
             duration: 5000,
           }}
           containerStyle={{
-            marginTop: "3rem",
+            marginTop: "4rem",
           }}
         />
       </div>

@@ -2,25 +2,23 @@ import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import "./TransactionStatusLink.css";
 import { ExternalLinkIcon } from "@heroicons/react/solid";
+import Button from "../../Atoms/Button/Button";
+import Spinner from "../../Atoms/Spinner/Spinner";
+
 export interface TransactionStatusLinkProps {
-  path: string;
   transactionCount: number;
+  onClick: () => void;
 }
 
 const TransactionStatusLink: FC<TransactionStatusLinkProps> = ({
-  path,
   transactionCount,
+  onClick,
 }) => {
   return (
-    <a
-      target="_blank"
-      className="transactionStatusLink"
-      rel="noreferrer noopener"
-      href={path}
-    >
+    <Button variant="primary" classes="flex gap-3" size="sm" onClick={onClick}>
+      <Spinner />
       <span>{transactionCount} Pending</span>
-      <ExternalLinkIcon className="w-5 h-5" />
-    </a>
+    </Button>
   );
 };
 

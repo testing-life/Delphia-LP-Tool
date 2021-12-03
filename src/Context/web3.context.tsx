@@ -11,6 +11,10 @@ import { CRDabi } from "../ABI/CRDabi";
 import { SECabi } from "../ABI/SECabi";
 import { Tokens } from "../Consts/tokens";
 import { TokenAddresses } from "../Enums/tokensAddresses";
+import {
+  TransactionReceipt,
+  TransactionResponse,
+} from "@ethersproject/providers";
 
 export type TWeb3Context = {
   setProvider: any;
@@ -20,6 +24,9 @@ export type TWeb3Context = {
   error: Error | undefined | string;
   accounts: string[] | undefined;
   balances: TBalances[] | undefined;
+  pending: TransactionResponse[];
+  removeFromPending: (receipt: TransactionReceipt) => void;
+  addToPending: (tx: NamedTransactionResponse) => void;
   getBalances: (arg: string) => void;
   estimateTokenGain: (arg: BigNumber) => Promise<BigNumberish>;
   estimateTokenCost: (arg: BigNumber) => Promise<BigNumberish>;
@@ -46,6 +53,10 @@ export type TBalances = {
   [key in TTokens]: string;
 };
 
+export interface NamedTransactionResponse extends TransactionResponse {
+  name: string;
+}
+
 const Web3Context = createContext<TWeb3Context>(null!);
 
 const Web3Provider: FC<IWeb3Provider> = (props) => {
@@ -54,6 +65,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error | string>();
   const [accounts, setAccounts] = useState<string[]>([]);
+  const [pending, setPending] = useState<NamedTransactionResponse[]>([]);
 
   useEffect(() => {
     if (provider) {
@@ -174,6 +186,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         error,
         accounts,
         balances,
+        pending,
         getBalances,
         estimateTokenGain,
         estimateTokenCost,
