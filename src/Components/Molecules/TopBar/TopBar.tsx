@@ -1,5 +1,6 @@
 import { DotsVerticalIcon } from "@heroicons/react/solid";
 import React, { FC, useEffect, useState } from "react";
+import { useDialog } from "react-dialog-async";
 import { useAuth } from "../../../Context/auth.context";
 import { IUser, useUser } from "../../../Context/user.context";
 import { useEthProvider } from "../../../Context/web3.context";
@@ -9,6 +10,7 @@ import IconButton from "../../Atoms/IconButton/IconButton";
 import Navigation from "../../Organisms/Navigation/Navigation";
 import ConnectedWalletDetails from "../ConnectedWalletDetails/ConnectedWalletDetails";
 import TransactionStatusLink from "../TransactionStatusLink/TransactionStatusLink";
+import PendingDialog from "./PendingDialog/PendingDialog";
 interface TopBarProps {
   currentAddress: string;
   accounts: string[];
@@ -16,6 +18,7 @@ interface TopBarProps {
 }
 const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
   const { logout } = useAuth();
+  const pendingDialog = useDialog(PendingDialog);
   const { provider, balances, getBalances, pending } = useEthProvider();
 
   const reconnect = async () => {
@@ -24,6 +27,10 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
     } catch (error) {
       console.error((error as Error).message);
     }
+  };
+
+  const handleClick = async () => {
+    await pendingDialog.show({ pending }).catch((e) => console.log(`e`, e));
   };
 
   useEffect(() => {
@@ -43,7 +50,7 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
           <>
             {currentAddress && !addressError && pending.length ? (
               <TransactionStatusLink
-                path="https://ecosia.org"
+                onClick={handleClick}
                 transactionCount={pending.length}
               />
             ) : null}

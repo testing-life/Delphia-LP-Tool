@@ -10,10 +10,7 @@ import Tab from "../../Components/Molecules/Tab/Tab";
 import Swap from "../../Components/Swap/Swap";
 import { ethers } from "ethers";
 import SwapApproval from "../../Components/Organisms/SwapApproval/SwapApproval";
-import {
-  TransactionReceipt,
-  TransactionResponse,
-} from "@ethersproject/providers";
+import { TransactionResponse } from "@ethersproject/providers";
 import {
   crdApprovalConfig,
   IApprovalConfig,
@@ -103,9 +100,7 @@ const DashboardPage: FC = () => {
         CRDabi
       ).catch((e) => console.log(`approval error`, e));
     }
-    console.log(`approval`, approval);
     const wait = await provider.waitForTransaction(approval!.hash);
-    console.log(`wait`, wait);
   };
   const notify = (variant: any) =>
     toast.custom(
@@ -185,7 +180,7 @@ const DashboardPage: FC = () => {
             duration: 5000,
           }}
           containerStyle={{
-            marginTop: "3rem",
+            marginTop: "4rem",
           }}
         />
       </div>

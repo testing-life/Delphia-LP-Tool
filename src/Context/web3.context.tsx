@@ -26,7 +26,7 @@ export type TWeb3Context = {
   balances: TBalances[] | undefined;
   pending: TransactionResponse[];
   removeFromPending: (receipt: TransactionReceipt) => void;
-  addToPending: (tx: TransactionResponse) => void;
+  addToPending: (tx: NamedTransactionResponse) => void;
   getBalances: (arg: string) => void;
   estimateTokenGain: (arg: BigNumber) => Promise<BigNumberish>;
   estimateTokenCost: (arg: BigNumber) => Promise<BigNumberish>;
@@ -58,6 +58,10 @@ export type TBalances = {
   [key in TTokens]: string;
 };
 
+export interface NamedTransactionResponse extends TransactionResponse {
+  name: string;
+}
+
 const Web3Context = createContext<TWeb3Context>(null!);
 
 const Web3Provider: FC<IWeb3Provider> = (props) => {
@@ -66,7 +70,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error | string>();
   const [accounts, setAccounts] = useState<string[]>([]);
-  const [pending, setPending] = useState<TransactionResponse[]>([]);
+  const [pending, setPending] = useState<NamedTransactionResponse[]>([]);
 
   useEffect(() => {
     if (provider) {
@@ -177,14 +181,14 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     return await contract.approve(spender, amount);
   };
 
-  const addToPending = (tx: TransactionResponse): void => {
+  const addToPending = (tx: NamedTransactionResponse): void => {
     const newPendingState = [...pending, tx];
     setPending(newPendingState);
   };
 
   const removeFromPending = (receipt: TransactionReceipt): void => {
     const newPendingState = pending.filter(
-      (item: TransactionResponse) => item.hash !== receipt.transactionHash
+      (item: NamedTransactionResponse) => item.hash !== receipt.transactionHash
     );
     setPending(newPendingState);
   };

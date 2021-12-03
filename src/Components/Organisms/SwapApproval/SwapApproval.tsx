@@ -2,15 +2,19 @@ import {
   TransactionReceipt,
   TransactionResponse,
 } from "@ethersproject/providers";
+import { ethers } from "ethers";
 import React, { FC, useState } from "react";
 import { useDialog } from "react-dialog-async";
+import toast from "react-hot-toast";
 import ReactTooltip from "react-tooltip";
 import { CRDabi } from "../../../ABI/CRDabi";
 import { SECabi } from "../../../ABI/SECabi";
 import { Tokens } from "../../../Consts/tokens";
 import { useEthProvider } from "../../../Context/web3.context";
+import { ToastMessages } from "../../../Enums/toast-messages";
 import { TokenAddresses } from "../../../Enums/tokensAddresses";
 import Button from "../../Atoms/Button/Button";
+import Toast from "../../Molecules/Toast/Toast";
 import "./SwapApproval.css";
 import SwapApprovalDialog from "./SwapApprovalDialog/SwapApprovalDialog";
 
@@ -19,6 +23,9 @@ export interface SwapApprovalProps {
 }
 const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
   const confirmationDialog = useDialog(SwapApprovalDialog);
+  const [approvalError, setApprovalError] = useState<any | undefined>(
+    undefined
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     getApprovalEstimate,
@@ -27,15 +34,33 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
     addToPending,
     removeFromPending,
   } = useEthProvider();
-
   const otherToken = Tokens.find(({ name }) => name !== token)?.name;
-  const handleClick = async () => {
-    const gasEstimate = await getApprovalEstimate().catch((e) =>
-      console.log(`gas estimate error`, e)
+
+  const notify = (
+    variant: "error" | "success",
+    msg: ToastMessages,
+    link: string
+  ) =>
+    toast.custom(
+      <Toast
+        variant={variant}
+        message={msg}
+        etherscanUrl={link}
+        onClose={() => toast.dismiss()}
+      />
     );
 
+  const handleClick = async () => {
+    if (approvalError) {
+      setApprovalError(undefined);
+    }
+    const gasEstimate = await getApprovalEstimate().catch((e) => {
+      console.log(`gas estimate error`, e);
+      setApprovalError(e);
+      notify("error", ToastMessages.TRANSACTION_FAILED, "https://ecosia.org");
+    });
+
     if (gasEstimate) {
-      setIsLoading(true);
       const response = await confirmationDialog
         .show({ token, otherToken, gasEstimate })
         .catch((e) => console.log(`dialog error`, e));
@@ -47,7 +72,15 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
             TokenAddresses.SEC,
             TokenAddresses.CRD,
             SECabi
-          ).catch((e) => console.log(`approval error`, e));
+          ).catch((e) => {
+            console.log(`approval error`, e);
+            setApprovalError(e);
+            notify(
+              "error",
+              ToastMessages.TRANSACTION_FAILED,
+              "https://ecosia.org"
+            );
+          });
         }
 
         if (token === "CRD") {
@@ -55,13 +88,29 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
             TokenAddresses.CRD,
             TokenAddresses.SEC,
             CRDabi
-          ).catch((e) => console.log(`approval error`, e));
+          ).catch((e) => {
+            console.log(`approval error`, e);
+            setApprovalError(e);
+            notify(
+              "error",
+              ToastMessages.TRANSACTION_FAILED,
+              "https://ecosia.org"
+            );
+          });
         }
         if (approval) {
-          addToPending(approval);
-          const receipt: TransactionReceipt = await provider.waitForTransaction(
-            approval.hash
-          );
+          addToPending({ ...approval, name: `Approve ${token}` });
+          const receipt: TransactionReceipt = await provider
+            .waitForTransaction(approval.hash)
+            .catch((e: any) => {
+              console.log(`e`, e);
+              setApprovalError(e);
+              notify(
+                "error",
+                ToastMessages.TRANSACTION_FAILED,
+                "https://ecosia.org"
+              );
+            });
           if (receipt) {
             removeFromPending(receipt);
             setIsLoading(false);
