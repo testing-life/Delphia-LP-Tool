@@ -11,6 +11,10 @@ import { CRDabi } from "../ABI/CRDabi";
 import { SECabi } from "../ABI/SECabi";
 import { Tokens } from "../Consts/tokens";
 import { TokenAddresses } from "../Enums/tokensAddresses";
+import {
+  TransactionReceipt,
+  TransactionResponse,
+} from "@ethersproject/providers";
 
 export type TWeb3Context = {
   setProvider: any;
@@ -20,16 +24,24 @@ export type TWeb3Context = {
   error: Error | undefined | string;
   accounts: string[] | undefined;
   balances: TBalances[] | undefined;
+  pending: TransactionResponse[];
+  removeFromPending: (receipt: TransactionReceipt) => void;
+  addToPending: (tx: NamedTransactionResponse) => void;
   getBalances: (arg: string) => void;
   estimateTokenGain: (arg: BigNumber) => Promise<BigNumberish>;
   estimateTokenCost: (arg: BigNumber) => Promise<BigNumberish>;
   getMaxAllowance: (arg1: TBalances[], arg2: TTokens) => string;
+  disproveSwapping: (
+    source: TokenAddresses,
+    spender: TokenAddresses,
+    abi: any
+  ) => Promise<TransactionResponse>;
   getApprovalEstimate: () => Promise<BigNumber>;
   approveSwapping: (
     source: TokenAddresses,
     spender: TokenAddresses,
     abi: any
-  ) => Promise<BigNumber>;
+  ) => Promise<TransactionResponse>;
 };
 
 interface IWeb3Provider {
@@ -46,6 +58,10 @@ export type TBalances = {
   [key in TTokens]: string;
 };
 
+export interface NamedTransactionResponse extends TransactionResponse {
+  name: string;
+}
+
 const Web3Context = createContext<TWeb3Context>(null!);
 
 const Web3Provider: FC<IWeb3Provider> = (props) => {
@@ -54,6 +70,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error | string>();
   const [accounts, setAccounts] = useState<string[]>([]);
+  const [pending, setPending] = useState<NamedTransactionResponse[]>([]);
 
   useEffect(() => {
     if (provider) {
@@ -158,10 +175,33 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     source: TokenAddresses,
     spender: TokenAddresses,
     abi: any
-  ): Promise<BigNumber> => {
+  ): Promise<TransactionResponse> => {
     const contract = new ethers.Contract(source, abi, signer);
     const amount = Number.MAX_SAFE_INTEGER - 1;
     return await contract.approve(spender, amount);
+  };
+
+  const addToPending = (tx: NamedTransactionResponse): void => {
+    const newPendingState = [...pending, tx];
+    setPending(newPendingState);
+  };
+
+  const removeFromPending = (receipt: TransactionReceipt): void => {
+    const newPendingState = pending.filter(
+      (item: NamedTransactionResponse) => item.hash !== receipt.transactionHash
+    );
+    setPending(newPendingState);
+  };
+
+  // for testing
+  const disproveSwapping = async (
+    source: TokenAddresses,
+    spender: TokenAddresses,
+    abi: any
+  ): Promise<TransactionResponse> => {
+    const contract = new ethers.Contract(source, abi, signer);
+    const amount = Number.MAX_SAFE_INTEGER - 1;
+    return await contract.decreaseAllowance(spender, amount);
   };
 
   return (
@@ -174,12 +214,16 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         error,
         accounts,
         balances,
+        pending,
         getBalances,
         estimateTokenGain,
         estimateTokenCost,
         getMaxAllowance,
         getApprovalEstimate,
         approveSwapping,
+        disproveSwapping,
+        addToPending,
+        removeFromPending,
       }}
       {...props}
     />

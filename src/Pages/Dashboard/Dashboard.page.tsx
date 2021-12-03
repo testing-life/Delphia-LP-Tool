@@ -10,17 +10,21 @@ import Tab from "../../Components/Molecules/Tab/Tab";
 import Swap from "../../Components/Swap/Swap";
 import { ethers } from "ethers";
 import SwapApproval from "../../Components/Organisms/SwapApproval/SwapApproval";
+import { TransactionResponse } from "@ethersproject/providers";
 import {
   crdApprovalConfig,
   IApprovalConfig,
   secApprovalConfig,
 } from "../../Consts/approvalConfig";
 import { TokenAddresses } from "../../Enums/tokensAddresses";
+import Button from "../../Components/Atoms/Button/Button";
+import { SECabi } from "../../ABI/SECabi";
+import { CRDabi } from "../../ABI/CRDabi";
 
 const DashboardPage: FC = () => {
   const user = useUser();
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const { accounts, signer } = useEthProvider();
+  const { accounts, signer, disproveSwapping, provider } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
   const [isSECapproved, setIsSECapproved] = useState<boolean>(false);
   const [isCRDapproved, setIsCRDapproved] = useState<boolean>(false);
@@ -79,7 +83,25 @@ const DashboardPage: FC = () => {
       console.log(`error`, error);
     }
   };
+  const disprove = async (token: any) => {
+    let approval: TransactionResponse | null | void = null;
+    if (token === "SEC") {
+      approval = await disproveSwapping(
+        TokenAddresses.SEC,
+        TokenAddresses.CRD,
+        SECabi
+      ).catch((e) => console.log(`approval error`, e));
+    }
 
+    if (token === "CRD") {
+      approval = await disproveSwapping(
+        TokenAddresses.CRD,
+        TokenAddresses.SEC,
+        CRDabi
+      ).catch((e) => console.log(`approval error`, e));
+    }
+    const wait = await provider.waitForTransaction(approval!.hash);
+  };
   const notify = (variant: any) =>
     toast.custom(
       <Toast
@@ -117,7 +139,16 @@ const DashboardPage: FC = () => {
             <Tab>
               <Card>
                 {isSECapproved ? (
-                  <Swap from="SEC" to="CRD" />
+                  <>
+                    <Button
+                      fullWidth
+                      variant="primary"
+                      onClick={() => disprove("SEC")}
+                    >
+                      disprove
+                    </Button>
+                    <Swap from="SEC" to="CRD" />
+                  </>
                 ) : (
                   <SwapApproval token="SEC" />
                 )}
@@ -126,7 +157,16 @@ const DashboardPage: FC = () => {
             <Tab>
               <Card>
                 {isCRDapproved ? (
-                  <Swap from="CRD" to="SEC" />
+                  <>
+                    <Button
+                      fullWidth
+                      variant="primary"
+                      onClick={() => disprove("CRD")}
+                    >
+                      disprove
+                    </Button>
+                    <Swap from="CRD" to="SEC" />
+                  </>
                 ) : (
                   <SwapApproval token="CRD" />
                 )}
@@ -140,7 +180,7 @@ const DashboardPage: FC = () => {
             duration: 5000,
           }}
           containerStyle={{
-            marginTop: "3rem",
+            marginTop: "4rem",
           }}
         />
       </div>
