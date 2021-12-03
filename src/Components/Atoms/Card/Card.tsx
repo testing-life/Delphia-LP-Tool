@@ -3,10 +3,18 @@ import "./Card.css";
 
 export interface CardProps {
   children: ReactNode;
+  variant?: "grey";
+  classes?: string;
 }
 
-const Card: FC<CardProps> = ({ children }) => {
-  return <div className="card">{children}</div>;
+const Card: FC<CardProps> = ({ children, variant, classes }) => {
+  return (
+    <div
+      className={`card ${variant === "grey" ? "card--grey" : ""} ${classes}`}
+    >
+      {children}
+    </div>
+  );
 };
 
 export default Card;
