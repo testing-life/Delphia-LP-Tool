@@ -15,6 +15,7 @@ import {
   TransactionReceipt,
   TransactionResponse,
 } from "@ethersproject/providers";
+import { ITxValues } from "../Components/Swap/Swap";
 
 export type TWeb3Context = {
   setProvider: any;
@@ -37,6 +38,7 @@ export type TWeb3Context = {
     abi: any
   ) => Promise<TransactionResponse>;
   getApprovalEstimate: () => Promise<BigNumber>;
+  swap: (from: TTokens, values: ITxValues) => Promise<BigNumber | undefined>;
   approveSwapping: (
     source: TokenAddresses,
     spender: TokenAddresses,
@@ -167,8 +169,36 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
 
   const getApprovalEstimate = async (): Promise<BigNumber> => {
     const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
+    const gas = await gasPrice();
     const amount = Number.MAX_SAFE_INTEGER - 1;
-    return await contract.estimateGas.approve(TokenAddresses.CRD, amount);
+    const gasEstimate = await contract.estimateGas.approve(
+      TokenAddresses.CRD,
+      amount
+    );
+    if (gas && gasEstimate) {
+      const txCostEstimate = gas.mul(gasEstimate);
+      return txCostEstimate;
+    } else {
+      throw new Error("Cannot get Approval gas estimate");
+    }
+  };
+
+  const swap = async (
+    from: TTokens,
+    values: ITxValues
+  ): Promise<BigNumber | undefined> => {
+    let contract = null;
+    const min = BigNumber.from(1);
+    switch (from) {
+      case "SEC":
+        contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
+        return await contract.bondToMint(values?.fromValue, min);
+      case "CRD":
+        contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
+        return await contract.burnToWithdraw(values?.toValue, min);
+      default:
+        break;
+    }
   };
 
   const approveSwapping = async (
@@ -177,7 +207,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     abi: any
   ): Promise<TransactionResponse> => {
     const contract = new ethers.Contract(source, abi, signer);
-    const amount = Number.MAX_SAFE_INTEGER - 1;
+    const amount = 2 ** 255;
     return await contract.approve(spender, amount);
   };
 
@@ -192,6 +222,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     );
     setPending(newPendingState);
   };
+
+  const gasPrice = async () => await provider.getGasPrice();
 
   // for testing
   const disproveSwapping = async (
@@ -215,6 +247,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         accounts,
         balances,
         pending,
+        swap,
         getBalances,
         estimateTokenGain,
         estimateTokenCost,

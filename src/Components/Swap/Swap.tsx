@@ -4,12 +4,14 @@ import { ethers } from "ethers";
 import React, { FC, useState } from "react";
 import { useDialog } from "react-dialog-async";
 import ReactTooltip from "react-tooltip";
+import { CRDabi } from "../../ABI/CRDabi";
 import {
   ReasonError,
   TBalances,
   TTokens,
   useEthProvider,
 } from "../../Context/web3.context";
+import { TokenAddresses } from "../../Enums/tokensAddresses";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
 import TokenAvatar from "../Atoms/TokenAvatar/TokenAvatar";
@@ -25,7 +27,7 @@ interface SwapProps {
   to: "SEC" | "CRD";
 }
 
-interface ITxValues {
+export interface ITxValues {
   toValue?: BigNumber | undefined;
   fromValue?: BigNumber | undefined;
 }
@@ -42,13 +44,22 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     estimateTokenGain,
     estimateTokenCost,
     getMaxAllowance,
+    swap,
+    signer,
   } = useEthProvider();
 
+  // const handleClick = async () => {
+  //   const response = await confirmationDialog
+  //     .show({})
+  //     .catch((e) => console.log(`e`, e));
+  //   setDialogResult(response);
+  // };
+
   const handleClick = async () => {
-    const response = await confirmationDialog
-      .show({})
-      .catch((e) => console.log(`e`, e));
-    setDialogResult(response);
+    const res = await swap("SEC", txValues as ITxValues).catch((e: any) =>
+      console.log(`e`, e)
+    );
+    console.log(`res`, res);
   };
 
   const onChangeTo = debounce(async (event: string) => {
