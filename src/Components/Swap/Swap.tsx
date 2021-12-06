@@ -11,6 +11,7 @@ import {
   TTokens,
   useEthProvider,
 } from "../../Context/web3.context";
+import { Actions } from "../../Enums/actions";
 import { TokenAddresses } from "../../Enums/tokensAddresses";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
@@ -44,23 +45,36 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     estimateTokenGain,
     estimateTokenCost,
     getMaxAllowance,
+    getSwapCostEstimate,
     swap,
     signer,
   } = useEthProvider();
 
-  // const handleClick = async () => {
-  //   const response = await confirmationDialog
-  //     .show({})
-  //     .catch((e) => console.log(`e`, e));
-  //   setDialogResult(response);
-  // };
-
   const handleClick = async () => {
-    const res = await swap("SEC", txValues as ITxValues).catch((e: any) =>
-      console.log(`e`, e)
+    const gasFeeEstimate = await getSwapCostEstimate(
+      from,
+      txValues as ITxValues
     );
-    console.log(`res`, res);
+    const response = await confirmationDialog
+      .show({
+        from,
+        to,
+        txValues: txValues as ITxValues,
+        action: Actions.SWAP,
+        gasFeeEstimate: gasFeeEstimate,
+        gainEstimate: bottom,
+        priceEstimate: top,
+      })
+      .catch((e) => console.log(`e`, e));
+    setDialogResult(response);
   };
+
+  // const handleClick = async () => {
+  //   const res = await swap("SEC", txValues as ITxValues).catch((e: any) =>
+  //     console.log(`e`, e)
+  //   );
+  //   console.log(`res`, res);
+  // };
 
   const onChangeTo = debounce(async (event: string) => {
     if (estimatesError) {

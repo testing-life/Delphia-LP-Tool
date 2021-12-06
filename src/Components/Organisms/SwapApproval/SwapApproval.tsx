@@ -11,6 +11,7 @@ import { CRDabi } from "../../../ABI/CRDabi";
 import { SECabi } from "../../../ABI/SECabi";
 import { Tokens } from "../../../Consts/tokens";
 import { useEthProvider } from "../../../Context/web3.context";
+import { Actions } from "../../../Enums/actions";
 import { ToastMessages } from "../../../Enums/toast-messages";
 import { TokenAddresses } from "../../../Enums/tokensAddresses";
 import Button from "../../Atoms/Button/Button";
@@ -99,7 +100,7 @@ const SwapApproval: FC<SwapApprovalProps> = ({ token }) => {
           });
         }
         if (approval) {
-          addToPending({ ...approval, name: `Approve ${token}` });
+          addToPending({ ...approval, name: `${Actions.APPROVE} ${token}` });
           const receipt: TransactionReceipt = await provider
             .waitForTransaction(approval.hash)
             .catch((e: any) => {

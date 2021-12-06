@@ -38,6 +38,7 @@ export type TWeb3Context = {
     abi: any
   ) => Promise<TransactionResponse>;
   getApprovalEstimate: () => Promise<BigNumber>;
+  getSwapCostEstimate: (from: TTokens, values: ITxValues) => Promise<BigNumber>;
   swap: (from: TTokens, values: ITxValues) => Promise<BigNumber | undefined>;
   approveSwapping: (
     source: TokenAddresses,
@@ -170,7 +171,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const getApprovalEstimate = async (): Promise<BigNumber> => {
     const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
     const gas = await gasPrice();
-    const amount = Number.MAX_SAFE_INTEGER - 1;
+    const amount = 2 ** 255;
     const gasEstimate = await contract.estimateGas.approve(
       TokenAddresses.CRD,
       amount
@@ -180,6 +181,42 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
       return txCostEstimate;
     } else {
       throw new Error("Cannot get Approval gas estimate");
+    }
+  };
+
+  const getSwapCostEstimate = async (
+    from: TTokens,
+    values: ITxValues
+  ): Promise<BigNumber> => {
+    let estimate = null;
+    let contract = null;
+    const gas = await gasPrice();
+    const min = BigNumber.from(1);
+
+    switch (from) {
+      case "SEC":
+        contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
+        estimate = await contract.estimateGas.bondToMint(
+          values?.fromValue,
+          min
+        );
+        break;
+      case "CRD":
+        contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
+        estimate = await contract.estimateGas.burnToWithdraw(
+          values?.toValue,
+          min
+        );
+        break;
+      default:
+        throw new Error("Missing swap token name");
+    }
+
+    if (gas && estimate) {
+      const txCostEstimate = gas.mul(estimate);
+      return txCostEstimate;
+    } else {
+      throw new Error("Cannot get Swap gas estimate");
     }
   };
 
@@ -254,6 +291,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         getMaxAllowance,
         getApprovalEstimate,
         approveSwapping,
+        getSwapCostEstimate,
         disproveSwapping,
         addToPending,
         removeFromPending,
