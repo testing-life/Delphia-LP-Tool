@@ -10,21 +10,22 @@ import Tab from "../../Components/Molecules/Tab/Tab";
 import Swap from "../../Components/Swap/Swap";
 import { ethers } from "ethers";
 import SwapApproval from "../../Components/Organisms/SwapApproval/SwapApproval";
-import { TransactionResponse } from "@ethersproject/providers";
 import {
   crdApprovalConfig,
   IApprovalConfig,
   secApprovalConfig,
 } from "../../Consts/approvalConfig";
 import { TokenAddresses } from "../../Enums/tokensAddresses";
-import Button from "../../Components/Atoms/Button/Button";
-import { SECabi } from "../../ABI/SECabi";
-import { CRDabi } from "../../ABI/CRDabi";
 
 const DashboardPage: FC = () => {
   const user = useUser();
-  const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const { accounts, signer, provider } = useEthProvider();
+  const {
+    accounts,
+    signer,
+    provider,
+    setCurrentAddress,
+    currentAddress,
+  } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
   const [isSECapproved, setIsSECapproved] = useState<boolean>(false);
   const [isCRDapproved, setIsCRDapproved] = useState<boolean>(false);
@@ -34,7 +35,7 @@ const DashboardPage: FC = () => {
     if (accounts?.length) {
       getAddress();
     } else {
-      setCurrentAddress(null);
+      setCurrentAddress(undefined);
     }
   }, [user, accounts]);
 

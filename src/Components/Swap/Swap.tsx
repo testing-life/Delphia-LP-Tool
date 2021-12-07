@@ -46,6 +46,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   const [estimatesError, setEstimatesError] = useState<string>();
   const {
     balances,
+    currentAddress,
     estimateTokenGain,
     estimateTokenCost,
     getMaxAllowance,
@@ -53,6 +54,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     swap,
     addToPending,
     removeFromPending,
+    getBalances,
     provider,
   } = useEthProvider();
 
@@ -78,7 +80,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     console.log(`dialogResult`, dialogResult);
     if (dialogResult) {
       swapTokens();
-      setDialogResult(false);
     }
   }, [dialogResult]);
 
@@ -122,6 +123,11 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           ToastMessages.TRANSACTION_SUCCESSFUL,
           "https://ecosia.org"
         );
+        setDialogResult(false);
+        if (currentAddress) {
+          getBalances(currentAddress);
+        }
+        setTxValues(txInitialState);
       }
     }
     console.log(`res`, res);
@@ -189,7 +195,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
 
   return (
     <section className="swap">
-      {console.log(`txValues`, txValues)}
+      {console.log(`txValues`, txValues, currentAddress)}
 
       <SwapInput label="Swap from">
         <TokenAvatar

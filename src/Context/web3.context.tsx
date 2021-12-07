@@ -18,6 +18,7 @@ import {
 import { ITxValues } from "../Components/Swap/Swap";
 
 export type TWeb3Context = {
+  currentAddress: string | undefined;
   setProvider: any;
   setSigner: any;
   provider: any;
@@ -46,6 +47,7 @@ export type TWeb3Context = {
     spender: TokenAddresses,
     abi: any
   ) => Promise<TransactionResponse>;
+  setCurrentAddress: (arg: string | undefined) => void;
 };
 
 interface IWeb3Provider {
@@ -73,6 +75,9 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error | string>();
+  const [currentAddress, setCurrentAddress] = useState<string | undefined>(
+    undefined
+  );
   const [accounts, setAccounts] = useState<string[]>([]);
   const [pending, setPending] = useState<NamedTransactionResponse[]>([]);
   const crdContract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
@@ -226,6 +231,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
       case "CRD":
         return await crdContract.burnToWithdraw(value, min);
       default:
+        throw new Error("No Token provided for swap");
         break;
     }
   };
@@ -257,6 +263,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   return (
     <Web3Context.Provider
       value={{
+        currentAddress,
         provider,
         signer,
         setProvider,
@@ -275,6 +282,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         getSwapCostEstimate,
         addToPending,
         removeFromPending,
+        setCurrentAddress,
       }}
       {...props}
     />
