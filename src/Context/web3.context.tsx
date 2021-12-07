@@ -38,7 +38,10 @@ export type TWeb3Context = {
     abi: any
   ) => Promise<TransactionResponse>;
   getApprovalEstimate: () => Promise<BigNumber>;
-  getSwapCostEstimate: (from: TTokens, values: ITxValues) => Promise<BigNumber>;
+  getSwapCostEstimate: (
+    source: TTokens,
+    values: ITxValues
+  ) => Promise<BigNumber>;
   swap: (from: TTokens, values: ITxValues) => Promise<BigNumber | undefined>;
   approveSwapping: (
     source: TokenAddresses,
@@ -185,7 +188,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   };
 
   const getSwapCostEstimate = async (
-    from: TTokens,
+    source: TTokens,
     values: ITxValues
   ): Promise<BigNumber> => {
     let estimate = null;
@@ -193,20 +196,18 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     const gas = await gasPrice();
     const min = BigNumber.from(1);
 
-    switch (from) {
+    switch (source) {
       case "SEC":
         contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-        estimate = await contract.estimateGas.bondToMint(
-          values?.fromValue,
-          min
-        );
+        estimate = await contract.estimateGas
+          .bondToMint(values?.fromValue, min)
+          .catch((e) => console.log(`Gas estimate error`, e));
         break;
       case "CRD":
-        contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
-        estimate = await contract.estimateGas.burnToWithdraw(
-          values?.toValue,
-          min
-        );
+        contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
+        estimate = await contract.estimateGas
+          .burnToWithdraw(values?.toValue, min)
+          .catch((e) => console.log(`Gas estimate error`, e));
         break;
       default:
         throw new Error("Missing swap token name");

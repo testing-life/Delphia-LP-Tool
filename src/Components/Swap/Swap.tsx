@@ -1,7 +1,7 @@
 import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { BigNumber } from "ethers";
 import { ethers } from "ethers";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useDialog } from "react-dialog-async";
 import ReactTooltip from "react-tooltip";
 import { CRDabi } from "../../ABI/CRDabi";
@@ -51,8 +51,9 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   } = useEthProvider();
 
   const handleClick = async () => {
+    const source = txValues?.fromValue ? from : to;
     const gasFeeEstimate = await getSwapCostEstimate(
-      from,
+      source,
       txValues as ITxValues
     );
     const response = await confirmationDialog
@@ -69,6 +70,9 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     setDialogResult(response);
   };
 
+  useEffect(() => {
+    console.log(`dialogResult`, dialogResult);
+  }, [dialogResult]);
   // const handleClick = async () => {
   //   const res = await swap("SEC", txValues as ITxValues).catch((e: any) =>
   //     console.log(`e`, e)
