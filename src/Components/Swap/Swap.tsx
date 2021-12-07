@@ -130,7 +130,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
         setTxValues(txInitialState);
       }
     }
-    console.log(`res`, res);
   };
 
   const onChangeFrom = debounce(async (event: string) => {
@@ -195,8 +194,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
 
   return (
     <section className="swap">
-      {console.log(`txValues`, txValues, currentAddress)}
-
       <SwapInput label="Swap from">
         <TokenAvatar
           caption={from}
