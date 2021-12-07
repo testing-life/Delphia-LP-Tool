@@ -20,7 +20,7 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
   const { logout } = useAuth();
   const pendingDialog = useDialog(PendingDialog);
   const { provider, balances, getBalances, pending } = useEthProvider();
-
+  const [isShown, setIsShown] = useState<boolean>(false);
   const reconnect = async () => {
     try {
       await provider.send("eth_requestAccounts", []);
@@ -66,9 +66,16 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
                 Connect Wallet
               </Button>
             )}
-            <IconButton onClick={() => {}}>
+            <IconButton onClick={() => setIsShown((prev) => !prev)}>
               <DotsVerticalIcon className="h-6 w-6 text-black" />
             </IconButton>
+            {isShown && (
+              <div className="z-10 p-2 absolute right-0 top-12 rounded bg-white">
+                <Button variant="primary" size="sm" onClick={logout}>
+                  Logout
+                </Button>
+              </div>
+            )}
           </>
         }
       ></Navigation>
@@ -77,7 +84,6 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
           Connected wallet address is unregistered.
         </p>
       )}
-      <button onClick={logout}>logout</button>
     </>
   );
 };
