@@ -32,11 +32,6 @@ export type TWeb3Context = {
   estimateTokenGain: (arg: BigNumber) => Promise<BigNumberish>;
   estimateTokenCost: (arg: BigNumber) => Promise<BigNumberish>;
   getMaxAllowance: (arg1: TBalances[], arg2: TTokens) => string;
-  disproveSwapping: (
-    source: TokenAddresses,
-    spender: TokenAddresses,
-    abi: any
-  ) => Promise<TransactionResponse>;
   getApprovalEstimate: () => Promise<BigNumber>;
   getSwapCostEstimate: (
     source: TTokens,
@@ -77,6 +72,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [error, setError] = useState<Error | string>();
   const [accounts, setAccounts] = useState<string[]>([]);
   const [pending, setPending] = useState<NamedTransactionResponse[]>([]);
+  const crdContract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
 
   useEffect(() => {
     if (provider) {
@@ -162,13 +158,13 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   };
 
   const estimateTokenGain = async (val: BigNumber): Promise<BigNumberish> => {
-    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-    return await contract.calculateCurvedMintReturn(val);
+    // const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
+    return await crdContract.calculateCurvedMintReturn(val);
   };
 
   const estimateTokenCost = async (val: BigNumber): Promise<BigNumberish> => {
-    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-    return await contract.calculateCurvedBurnReturn(val);
+    // const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
+    return await crdContract.calculateCurvedBurnReturn(val);
   };
 
   const getApprovalEstimate = async (): Promise<BigNumber> => {
@@ -192,20 +188,19 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     values: ITxValues
   ): Promise<BigNumber> => {
     let estimate = null;
-    let contract = null;
+    // let contract = null;
     const gas = await gasPrice();
     const min = BigNumber.from(1);
+    // contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
 
     switch (source) {
       case "SEC":
-        contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-        estimate = await contract.estimateGas
+        estimate = await crdContract.estimateGas
           .bondToMint(values?.fromValue, min)
           .catch((e) => console.log(`Gas estimate error`, e));
         break;
       case "CRD":
-        contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-        estimate = await contract.estimateGas
+        estimate = await crdContract.estimateGas
           .burnToWithdraw(values?.toValue, min)
           .catch((e) => console.log(`Gas estimate error`, e));
         break;
@@ -225,15 +220,14 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     from: TTokens,
     values: ITxValues
   ): Promise<BigNumber | undefined> => {
-    let contract = null;
+    // let contract = null;
     const min = BigNumber.from(1);
+    // contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
     switch (from) {
       case "SEC":
-        contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-        return await contract.bondToMint(values?.fromValue, min);
+        return await crdContract.bondToMint(values?.fromValue, min);
       case "CRD":
-        contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
-        return await contract.burnToWithdraw(values?.toValue, min);
+        return await crdContract.burnToWithdraw(values?.toValue, min);
       default:
         break;
     }
@@ -263,17 +257,6 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
 
   const gasPrice = async () => await provider.getGasPrice();
 
-  // for testing
-  const disproveSwapping = async (
-    source: TokenAddresses,
-    spender: TokenAddresses,
-    abi: any
-  ): Promise<TransactionResponse> => {
-    const contract = new ethers.Contract(source, abi, signer);
-    const amount = Number.MAX_SAFE_INTEGER - 1;
-    return await contract.decreaseAllowance(spender, amount);
-  };
-
   return (
     <Web3Context.Provider
       value={{
@@ -293,7 +276,6 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         getApprovalEstimate,
         approveSwapping,
         getSwapCostEstimate,
-        disproveSwapping,
         addToPending,
         removeFromPending,
       }}
