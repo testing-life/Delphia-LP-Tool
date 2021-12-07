@@ -37,7 +37,10 @@ export type TWeb3Context = {
     source: TTokens,
     values: ITxValues
   ) => Promise<BigNumber>;
-  swap: (from: TTokens, values: ITxValues) => Promise<BigNumber | undefined>;
+  swap: (
+    from: TTokens,
+    values: ITxValues
+  ) => Promise<TransactionResponse | undefined>;
   approveSwapping: (
     source: TokenAddresses,
     spender: TokenAddresses,
@@ -158,12 +161,10 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   };
 
   const estimateTokenGain = async (val: BigNumber): Promise<BigNumberish> => {
-    // const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
     return await crdContract.calculateCurvedMintReturn(val);
   };
 
   const estimateTokenCost = async (val: BigNumber): Promise<BigNumberish> => {
-    // const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
     return await crdContract.calculateCurvedBurnReturn(val);
   };
 
@@ -188,10 +189,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     values: ITxValues
   ): Promise<BigNumber> => {
     let estimate = null;
-    // let contract = null;
     const gas = await gasPrice();
     const min = BigNumber.from(1);
-    // contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
 
     switch (source) {
       case "SEC":
@@ -219,10 +218,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const swap = async (
     from: TTokens,
     values: ITxValues
-  ): Promise<BigNumber | undefined> => {
-    // let contract = null;
+  ): Promise<TransactionResponse | undefined> => {
     const min = BigNumber.from(1);
-    // contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
     switch (from) {
       case "SEC":
         return await crdContract.bondToMint(values?.fromValue, min);

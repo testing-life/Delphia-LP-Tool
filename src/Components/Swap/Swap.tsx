@@ -1,8 +1,13 @@
+import {
+  TransactionReceipt,
+  TransactionResponse,
+} from "@ethersproject/providers";
 import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { BigNumber } from "ethers";
 import { ethers } from "ethers";
 import React, { FC, useEffect, useState } from "react";
 import { useDialog } from "react-dialog-async";
+import toast from "react-hot-toast";
 import ReactTooltip from "react-tooltip";
 import { CRDabi } from "../../ABI/CRDabi";
 import {
@@ -12,6 +17,7 @@ import {
   useEthProvider,
 } from "../../Context/web3.context";
 import { Actions } from "../../Enums/actions";
+import { ToastMessages } from "../../Enums/toast-messages";
 import { TokenAddresses } from "../../Enums/tokensAddresses";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
@@ -20,6 +26,7 @@ import MaxCurrencyInput from "../Molecules/MaxCurrencyInput/MaxCurrencyInput";
 import SwapInput from "../Molecules/SwapInput/SwapInput";
 import SwapSummary from "../Molecules/SwapSummary/SwapSummary";
 import SwapSummaryItem from "../Molecules/SwapSummaryItem/SwapSummaryItem";
+import Toast from "../Molecules/Toast/Toast";
 import "./Swap.css";
 import ConfirmationDialog from "./SwapDialog/SwapDialog";
 
@@ -47,6 +54,9 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     getMaxAllowance,
     getSwapCostEstimate,
     swap,
+    addToPending,
+    removeFromPending,
+    provider,
     signer,
   } = useEthProvider();
 
@@ -72,13 +82,54 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
 
   useEffect(() => {
     console.log(`dialogResult`, dialogResult);
+    if (dialogResult) {
+      swapTokens();
+      setDialogResult(false);
+    }
   }, [dialogResult]);
-  // const handleClick = async () => {
-  //   const res = await swap("SEC", txValues as ITxValues).catch((e: any) =>
-  //     console.log(`e`, e)
-  //   );
-  //   console.log(`res`, res);
-  // };
+
+  const notify = (
+    variant: "error" | "success",
+    msg: ToastMessages,
+    link: string
+  ) =>
+    toast.custom(
+      <Toast
+        variant={variant}
+        message={msg}
+        etherscanUrl={link}
+        onClose={() => toast.dismiss()}
+      />
+    );
+
+  const swapTokens = async () => {
+    const res = await swap(from, txValues as ITxValues).catch((e: any) => {
+      console.log(`approval error`, e);
+      notify("error", ToastMessages.TRANSACTION_FAILED, "https://ecosia.org");
+    });
+    if (res) {
+      addToPending({ ...res, name: `${Actions.SWAP} ${from}` });
+      const receipt: TransactionReceipt = await provider
+        .waitForTransaction(res.hash)
+        .catch((e: any) => {
+          console.log(`e`, e);
+          notify(
+            "error",
+            ToastMessages.TRANSACTION_FAILED,
+            "https://ecosia.org"
+          );
+        });
+      if (receipt) {
+        removeFromPending(receipt);
+        notify(
+          "success",
+          ToastMessages.TRANSACTION_SUCCESSFUL,
+          "https://ecosia.org"
+        );
+      }
+    }
+    console.log(`res`, res);
+  };
 
   const onChangeTo = debounce(async (event: string) => {
     if (estimatesError) {
