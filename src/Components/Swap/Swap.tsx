@@ -37,13 +37,22 @@ interface SwapProps {
 
 export interface ITxValues {
   toValue?: BigNumber | undefined;
+  toValueFormatted?: string | undefined;
   fromValue?: BigNumber | undefined;
+  fromValueFormatted?: string | undefined;
 }
+
+const txInitialState: ITxValues = {
+  toValue: undefined,
+  fromValue: undefined,
+  toValueFormatted: "",
+  fromValueFormatted: "",
+};
 
 const Swap: FC<SwapProps> = ({ from, to }) => {
   const confirmationDialog = useDialog(ConfirmationDialog);
   const [dialogResult, setDialogResult] = useState<any>();
-  const [txValues, setTxValues] = useState<ITxValues | undefined>(undefined);
+  const [txValues, setTxValues] = useState<ITxValues>(txInitialState);
   const [top, setTop] = useState<any>("");
   const [bottom, setBottom] = useState<any>("");
   const [estimatesError, setEstimatesError] = useState<string>();
@@ -73,8 +82,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
         txValues: txValues as ITxValues,
         action: Actions.SWAP,
         gasFeeEstimate: gasFeeEstimate,
-        gainEstimate: bottom,
-        priceEstimate: top,
       })
       .catch((e) => console.log(`e`, e));
     setDialogResult(response);
@@ -103,10 +110,12 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     );
 
   const swapTokens = async () => {
-    const res = await swap(from, txValues as ITxValues).catch((e: any) => {
-      console.log(`approval error`, e);
-      notify("error", ToastMessages.TRANSACTION_FAILED, "https://ecosia.org");
-    });
+    const res = await swap(from, txValues.toValue as BigNumber).catch(
+      (e: any) => {
+        console.log(`approval error`, e);
+        notify("error", ToastMessages.TRANSACTION_FAILED, "https://ecosia.org");
+      }
+    );
     if (res) {
       addToPending({ ...res, name: `${Actions.SWAP} ${from}` });
       const receipt: TransactionReceipt = await provider
@@ -131,56 +140,70 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     console.log(`res`, res);
   };
 
-  const onChangeTo = debounce(async (event: string) => {
-    if (estimatesError) {
-      setEstimatesError(undefined);
-    }
-
-    if (event === bottom) {
-      return;
-    }
-
-    if (!event) {
-      setTxValues(undefined);
-      return;
-    }
-
-    const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
-    setTxValues({ toValue });
-    const estimate = await estimateTokenCost(toValue).catch((error) => {
-      setEstimatesError((error as ReasonError).reason);
-    });
-    if (estimate) {
-      setTop(ethers.utils.formatEther(estimate));
-    }
-  }, 500);
-
   const onChangeFrom = debounce(async (event: string) => {
     if (estimatesError) {
       setEstimatesError(undefined);
     }
 
-    if (event === top) {
+    if (event === txValues.fromValueFormatted) {
       return;
     }
 
     if (!event) {
-      setTxValues(undefined);
+      setTxValues(txInitialState);
       return;
     }
 
     const fromValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
-    setTxValues({ fromValue });
     const estimate = await estimateTokenGain(fromValue).catch((error) => {
       setEstimatesError((error as ReasonError).reason);
     });
     if (estimate) {
-      setBottom(ethers.utils.formatEther(estimate));
+      const newTxObj: ITxValues = {
+        fromValue,
+        fromValueFormatted: ethers.utils.formatEther(fromValue),
+        toValue: estimate as BigNumber,
+        toValueFormatted: ethers.utils.formatEther(estimate),
+      };
+
+      setTxValues(newTxObj);
+    }
+  }, 500);
+
+  const onChangeTo = debounce(async (event: string) => {
+    if (estimatesError) {
+      setEstimatesError(undefined);
+    }
+
+    if (event === txValues.toValueFormatted) {
+      return;
+    }
+
+    if (!event) {
+      setTxValues(txInitialState);
+      return;
+    }
+
+    const toValue: BigNumber = ethers.utils.parseUnits(event as string, 18);
+    const estimate = await estimateTokenCost(toValue).catch((error) => {
+      setEstimatesError((error as ReasonError).reason);
+    });
+    if (estimate) {
+      const newTxObj: ITxValues = {
+        fromValue: estimate as BigNumber,
+        fromValueFormatted: ethers.utils.formatEther(estimate),
+        toValue,
+        toValueFormatted: ethers.utils.formatEther(toValue),
+      };
+
+      setTxValues(newTxObj);
     }
   }, 500);
 
   return (
     <section className="swap">
+      {console.log(`txValues`, txValues)}
+
       <SwapInput label="Swap from">
         <TokenAvatar
           caption={from}
@@ -192,7 +215,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           onChange={onChangeFrom}
           placeholder="0.0"
           type="text"
-          value={top}
+          value={txValues.fromValueFormatted as string}
           error={!!estimatesError}
         />
       </SwapInput>
@@ -206,7 +229,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           onChange={onChangeTo}
           placeholder="0.0"
           type="text"
-          value={bottom}
+          value={txValues.toValueFormatted as string}
           error={!!estimatesError}
         />
       </SwapInput>
@@ -233,7 +256,7 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
         </SwapSummaryItem>
         <SwapSummaryItem
           label="Your receive"
-          value={`${bottom ? bottom : "0"} ${to}`}
+          value={`${txValues.toValueFormatted || 0}  ${to}`}
         >
           <>
             <QuestionMarkCircleIcon
@@ -252,19 +275,19 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
           </>
         </SwapSummaryItem>
       </SwapSummary>
-      {!bottom && !top && (
+      {!txValues.fromValue && !txValues.toValue && (
         <p className="text-sm text-gray-600 mb-10 text-right">
           Enter amount to see calculation
         </p>
       )}
       <Button
         variant="primary"
-        disabled={!txValues}
+        disabled={!txValues.fromValue && !txValues.toValue}
         fullWidth
         classes="mb-4"
         onClick={handleClick}
       >
-        {!txValues ? "Enter Amount" : "Swap"}
+        {!txValues.fromValue && !txValues.toValue ? "Enter Amount" : "Swap"}
       </Button>
       {txValues && !estimatesError && (
         <p className="text-sm text-center font-medium text-gray-600">
