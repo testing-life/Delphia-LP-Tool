@@ -110,9 +110,10 @@ const ConfirmationDialog: React.FC<
                   <SwapSummaryItem
                     label={`You receive`}
                     value={
-                      data.priceEstimate
-                        ? (data.priceEstimate as string)
-                        : (data.gainEstimate as string)
+                      data.gainEstimate ||
+                      ethers.utils.formatEther(
+                        data.txValues.toValue as BigNumber
+                      )
                     }
                   >
                     <>

@@ -24,7 +24,7 @@ import { CRDabi } from "../../ABI/CRDabi";
 const DashboardPage: FC = () => {
   const user = useUser();
   const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const { accounts, signer, disproveSwapping, provider } = useEthProvider();
+  const { accounts, signer, provider } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
   const [isSECapproved, setIsSECapproved] = useState<boolean>(false);
   const [isCRDapproved, setIsCRDapproved] = useState<boolean>(false);
@@ -83,25 +83,7 @@ const DashboardPage: FC = () => {
       console.log(`error`, error);
     }
   };
-  const disprove = async (token: any) => {
-    let approval: TransactionResponse | null | void = null;
-    if (token === "SEC") {
-      approval = await disproveSwapping(
-        TokenAddresses.SEC,
-        TokenAddresses.CRD,
-        SECabi
-      ).catch((e) => console.log(`approval error`, e));
-    }
 
-    if (token === "CRD") {
-      approval = await disproveSwapping(
-        TokenAddresses.CRD,
-        TokenAddresses.SEC,
-        CRDabi
-      ).catch((e) => console.log(`approval error`, e));
-    }
-    const wait = await provider.waitForTransaction(approval!.hash);
-  };
   const notify = (variant: any) =>
     toast.custom(
       <Toast
@@ -118,10 +100,6 @@ const DashboardPage: FC = () => {
         accounts={accounts as string[]}
         addressError={addressError}
       />
-      {/* <br />
-      <button onClick={() => notify("error")}>toast</button>
-      <br />
-      <button onClick={() => notify("success")}>toast succ</button> */}
       <div className="bg-gray-800 text-gray-900 flex h-screen justify-center items-start pt-28 relative">
         {addressError && (
           <Card>
@@ -139,16 +117,7 @@ const DashboardPage: FC = () => {
             <Tab>
               <Card>
                 {isSECapproved ? (
-                  <>
-                    <Button
-                      fullWidth
-                      variant="primary"
-                      onClick={() => disprove("SEC")}
-                    >
-                      disprove
-                    </Button>
-                    <Swap from="SEC" to="CRD" />
-                  </>
+                  <Swap from="SEC" to="CRD" />
                 ) : (
                   <SwapApproval token="SEC" />
                 )}
@@ -157,16 +126,7 @@ const DashboardPage: FC = () => {
             <Tab>
               <Card>
                 {isCRDapproved ? (
-                  <>
-                    <Button
-                      fullWidth
-                      variant="primary"
-                      onClick={() => disprove("CRD")}
-                    >
-                      disprove
-                    </Button>
-                    <Swap from="CRD" to="SEC" />
-                  </>
+                  <Swap from="CRD" to="SEC" />
                 ) : (
                   <SwapApproval token="CRD" />
                 )}
