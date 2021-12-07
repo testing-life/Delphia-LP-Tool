@@ -23,7 +23,7 @@ const ConfirmationDialog: React.FC<
       {open && (
         <div className={"swapApprovalDialog"}>
           <div
-            className={"absolute w-full h-full bg-black bg-opacity-20"}
+            className={"swapApprovalDialog__backdrop"}
             onClick={() => handleClose()}
           ></div>
           <div className={"swapApprovalDialog__contentWrapper"}>
@@ -46,9 +46,9 @@ const ConfirmationDialog: React.FC<
                 blockchain requires a transaction.
               </p>
               <Card variant="grey" classes="mb-9">
-                <p className="font-semibold text-lg pb-3 mb-3 border-gray-200 border-b">
+                <h3 className="font-semibold text-lg pb-3 mb-3 border-gray-200 border-b">
                   Transaction Details
-                </p>
+                </h3>
                 <SwapSummary>
                   <SwapSummaryItem
                     label="Action"

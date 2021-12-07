@@ -11,8 +11,14 @@ import { CRDabi } from "../ABI/CRDabi";
 import { SECabi } from "../ABI/SECabi";
 import { Tokens } from "../Consts/tokens";
 import { TokenAddresses } from "../Enums/tokensAddresses";
+import {
+  TransactionReceipt,
+  TransactionResponse,
+} from "@ethersproject/providers";
+import { ITxValues } from "../Components/Swap/Swap";
 
 export type TWeb3Context = {
+  currentAddress: string | undefined;
   setProvider: any;
   setSigner: any;
   provider: any;
@@ -20,16 +26,28 @@ export type TWeb3Context = {
   error: Error | undefined | string;
   accounts: string[] | undefined;
   balances: TBalances[] | undefined;
+  pending: TransactionResponse[];
+  removeFromPending: (receipt: TransactionReceipt) => void;
+  addToPending: (tx: NamedTransactionResponse) => void;
   getBalances: (arg: string) => void;
   estimateTokenGain: (arg: BigNumber) => Promise<BigNumberish>;
   estimateTokenCost: (arg: BigNumber) => Promise<BigNumberish>;
   getMaxAllowance: (arg1: TBalances[], arg2: TTokens) => string;
   getApprovalEstimate: () => Promise<BigNumber>;
+  getSwapCostEstimate: (
+    source: TTokens,
+    values: ITxValues
+  ) => Promise<BigNumber>;
+  swap: (
+    from: TTokens,
+    value: BigNumber
+  ) => Promise<TransactionResponse | undefined>;
   approveSwapping: (
     source: TokenAddresses,
     spender: TokenAddresses,
     abi: any
-  ) => Promise<BigNumber>;
+  ) => Promise<TransactionResponse>;
+  setCurrentAddress: (arg: string | undefined) => void;
 };
 
 interface IWeb3Provider {
@@ -46,6 +64,10 @@ export type TBalances = {
   [key in TTokens]: string;
 };
 
+export interface NamedTransactionResponse extends TransactionResponse {
+  name: string;
+}
+
 const Web3Context = createContext<TWeb3Context>(null!);
 
 const Web3Provider: FC<IWeb3Provider> = (props) => {
@@ -53,7 +75,12 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error | string>();
+  const [currentAddress, setCurrentAddress] = useState<string | undefined>(
+    undefined
+  );
   const [accounts, setAccounts] = useState<string[]>([]);
+  const [pending, setPending] = useState<NamedTransactionResponse[]>([]);
+  const crdContract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
 
   useEffect(() => {
     if (provider) {
@@ -139,34 +166,104 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   };
 
   const estimateTokenGain = async (val: BigNumber): Promise<BigNumberish> => {
-    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-    return await contract.calculateCurvedMintReturn(val);
+    return await crdContract.calculateCurvedMintReturn(val);
   };
 
   const estimateTokenCost = async (val: BigNumber): Promise<BigNumberish> => {
-    const contract = new ethers.Contract(TokenAddresses.CRD, CRDabi, signer);
-    return await contract.calculateCurvedBurnReturn(val);
+    return await crdContract.calculateCurvedBurnReturn(val);
   };
 
   const getApprovalEstimate = async (): Promise<BigNumber> => {
     const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
-    const amount = Number.MAX_SAFE_INTEGER - 1;
-    return await contract.estimateGas.approve(TokenAddresses.CRD, amount);
+    const gas = await gasPrice();
+    const amount = 2 ** 255;
+    const gasEstimate = await contract.estimateGas.approve(
+      TokenAddresses.CRD,
+      amount
+    );
+    if (gas && gasEstimate) {
+      const txCostEstimate = gas.mul(gasEstimate);
+      return txCostEstimate;
+    } else {
+      throw new Error("Cannot get Approval gas estimate");
+    }
+  };
+
+  const getSwapCostEstimate = async (
+    source: TTokens,
+    values: ITxValues
+  ): Promise<BigNumber> => {
+    let estimate = null;
+    const gas = await gasPrice();
+    const min = BigNumber.from(1);
+
+    switch (source) {
+      case "SEC":
+        estimate = await crdContract.estimateGas
+          .bondToMint(values?.fromValue, min)
+          .catch((e) => console.log(`Gas estimate error`, e));
+        break;
+      case "CRD":
+        estimate = await crdContract.estimateGas
+          .burnToWithdraw(values?.toValue, min)
+          .catch((e) => console.log(`Gas estimate error`, e));
+        break;
+      default:
+        throw new Error("Missing swap token name");
+    }
+
+    if (gas && estimate) {
+      const txCostEstimate = gas.mul(estimate);
+      return txCostEstimate;
+    } else {
+      throw new Error("Cannot get Swap gas estimate");
+    }
+  };
+
+  const swap = async (
+    from: TTokens,
+    value: BigNumber
+  ): Promise<TransactionResponse | undefined> => {
+    const min = BigNumber.from(1);
+    switch (from) {
+      case "SEC":
+        return await crdContract.bondToMint(value, min);
+      case "CRD":
+        return await crdContract.burnToWithdraw(value, min);
+      default:
+        throw new Error("No Token provided for swap");
+        break;
+    }
   };
 
   const approveSwapping = async (
     source: TokenAddresses,
     spender: TokenAddresses,
     abi: any
-  ): Promise<BigNumber> => {
+  ): Promise<TransactionResponse> => {
     const contract = new ethers.Contract(source, abi, signer);
-    const amount = Number.MAX_SAFE_INTEGER - 1;
+    const amount = 2 ** 255;
     return await contract.approve(spender, amount);
   };
+
+  const addToPending = (tx: NamedTransactionResponse): void => {
+    const newPendingState = [...pending, tx];
+    setPending(newPendingState);
+  };
+
+  const removeFromPending = (receipt: TransactionReceipt): void => {
+    const newPendingState = pending.filter(
+      (item: NamedTransactionResponse) => item.hash !== receipt.transactionHash
+    );
+    setPending(newPendingState);
+  };
+
+  const gasPrice = async () => await provider.getGasPrice();
 
   return (
     <Web3Context.Provider
       value={{
+        currentAddress,
         provider,
         signer,
         setProvider,
@@ -174,12 +271,18 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         error,
         accounts,
         balances,
+        pending,
+        swap,
         getBalances,
         estimateTokenGain,
         estimateTokenCost,
         getMaxAllowance,
         getApprovalEstimate,
         approveSwapping,
+        getSwapCostEstimate,
+        addToPending,
+        removeFromPending,
+        setCurrentAddress,
       }}
       {...props}
     />

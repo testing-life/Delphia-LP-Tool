@@ -1,14 +1,14 @@
 @layer components {
-  .swapDialog {
+  .pendingDialog {
     @apply absolute inset-0 flex items-start justify-center;
   }
 
-  .swapDialog__contentWrapper {
+  .pendingDialog__contentWrapper {
     margin-top: 11rem;
     @apply relative mx-auto z-10;
   }
 
-  .swapDialog__backdrop {
+  .pendingDialog__backdrop {
     @apply absolute w-full h-full bg-black bg-opacity-20;
   }
 }

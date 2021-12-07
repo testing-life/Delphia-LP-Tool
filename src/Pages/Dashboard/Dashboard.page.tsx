@@ -19,8 +19,13 @@ import { TokenAddresses } from "../../Enums/tokensAddresses";
 
 const DashboardPage: FC = () => {
   const user = useUser();
-  const [currentAddress, setCurrentAddress] = useState<string | null>(null);
-  const { accounts, signer } = useEthProvider();
+  const {
+    accounts,
+    signer,
+    provider,
+    setCurrentAddress,
+    currentAddress,
+  } = useEthProvider();
   const [addressError, setAddressError] = useState<boolean>(false);
   const [isSECapproved, setIsSECapproved] = useState<boolean>(false);
   const [isCRDapproved, setIsCRDapproved] = useState<boolean>(false);
@@ -30,7 +35,7 @@ const DashboardPage: FC = () => {
     if (accounts?.length) {
       getAddress();
     } else {
-      setCurrentAddress(null);
+      setCurrentAddress(undefined);
     }
   }, [user, accounts]);
 
@@ -96,10 +101,6 @@ const DashboardPage: FC = () => {
         accounts={accounts as string[]}
         addressError={addressError}
       />
-      {/* <br />
-      <button onClick={() => notify("error")}>toast</button>
-      <br />
-      <button onClick={() => notify("success")}>toast succ</button> */}
       <div className="bg-gray-800 text-gray-900 flex h-screen justify-center items-start pt-28 relative">
         {addressError && (
           <Card>
@@ -140,7 +141,7 @@ const DashboardPage: FC = () => {
             duration: 5000,
           }}
           containerStyle={{
-            marginTop: "3rem",
+            marginTop: "4rem",
           }}
         />
       </div>
