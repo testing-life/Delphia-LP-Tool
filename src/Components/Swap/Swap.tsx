@@ -1,7 +1,4 @@
-import {
-  TransactionReceipt,
-  TransactionResponse,
-} from "@ethersproject/providers";
+import { TransactionReceipt } from "@ethersproject/providers";
 import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 import { BigNumber } from "ethers";
 import { ethers } from "ethers";
@@ -9,16 +6,9 @@ import React, { FC, useEffect, useState } from "react";
 import { useDialog } from "react-dialog-async";
 import toast from "react-hot-toast";
 import ReactTooltip from "react-tooltip";
-import { CRDabi } from "../../ABI/CRDabi";
-import {
-  ReasonError,
-  TBalances,
-  TTokens,
-  useEthProvider,
-} from "../../Context/web3.context";
+import { ReasonError, useEthProvider } from "../../Context/web3.context";
 import { Actions } from "../../Enums/actions";
 import { ToastMessages } from "../../Enums/toast-messages";
-import { TokenAddresses } from "../../Enums/tokensAddresses";
 import debounce from "../../Utils/debounce";
 import Button from "../Atoms/Button/Button";
 import TokenAvatar from "../Atoms/TokenAvatar/TokenAvatar";
@@ -53,8 +43,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
   const confirmationDialog = useDialog(ConfirmationDialog);
   const [dialogResult, setDialogResult] = useState<any>();
   const [txValues, setTxValues] = useState<ITxValues>(txInitialState);
-  const [top, setTop] = useState<any>("");
-  const [bottom, setBottom] = useState<any>("");
   const [estimatesError, setEstimatesError] = useState<string>();
   const {
     balances,
@@ -66,7 +54,6 @@ const Swap: FC<SwapProps> = ({ from, to }) => {
     addToPending,
     removeFromPending,
     provider,
-    signer,
   } = useEthProvider();
 
   const handleClick = async () => {
