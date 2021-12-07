@@ -57,9 +57,7 @@ const ConfirmationDialog: React.FC<
                     caption={data.from as string}
                   />
                   <span className="text-2xl font-medium ">
-                    {data.txValues?.fromValue
-                      ? ethers.utils.formatEther(data.txValues.fromValue)
-                      : data.priceEstimate}
+                    {data.txValues.fromValueFormatted}
                   </span>
                 </div>
               </Card>
@@ -71,9 +69,7 @@ const ConfirmationDialog: React.FC<
                     caption={data.to as string}
                   />
                   <span className="text-2xl font-medium">
-                    {data.txValues?.toValue
-                      ? ethers.utils.formatEther(data.txValues.toValue)
-                      : data.gainEstimate}
+                    {data.txValues.toValueFormatted}
                   </span>
                 </div>
               </Card>
