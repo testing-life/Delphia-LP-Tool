@@ -39,7 +39,7 @@ export type TWeb3Context = {
   ) => Promise<BigNumber>;
   swap: (
     from: TTokens,
-    values: ITxValues
+    value: BigNumber
   ) => Promise<TransactionResponse | undefined>;
   approveSwapping: (
     source: TokenAddresses,
@@ -217,14 +217,14 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
 
   const swap = async (
     from: TTokens,
-    values: ITxValues
+    value: BigNumber
   ): Promise<TransactionResponse | undefined> => {
     const min = BigNumber.from(1);
     switch (from) {
       case "SEC":
-        return await crdContract.bondToMint(values?.fromValue, min);
+        return await crdContract.bondToMint(value, min);
       case "CRD":
-        return await crdContract.burnToWithdraw(values?.toValue, min);
+        return await crdContract.burnToWithdraw(value, min);
       default:
         break;
     }
