@@ -13,7 +13,7 @@ export default {
 const Template: Story<SwapSummaryProps> = (args) => (
   <SwapSummary {...args}>
     <SwapSummaryItem
-      label="Current CRD Price"
+      label="CRD Price"
       value="0.15 SEC"
     ></SwapSummaryItem>
     <SwapSummaryItem label="You receive" value="0 CRD" />

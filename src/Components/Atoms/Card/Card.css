@@ -1,7 +1,15 @@
 @layer components {
   .card {
     width: 36rem;
-    @apply bg-white py-14 px-20 rounded-2xl;
+    @apply bg-white p-10 rounded-2xl;
+  }
+
+  .card.sm {
+    @apply p-5;
+  }
+
+  .card.lg {
+    @apply p-20;
   }
 
   .card--grey {

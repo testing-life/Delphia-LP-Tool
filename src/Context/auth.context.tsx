@@ -73,9 +73,9 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
         const message =
           data.length > 1
             ? data.reduce((acc: any, next: any) => {
-                const msg = `${acc.message} ${next.message}`;
-                return msg;
-              })
+              const msg = `${acc.message} ${next.message}`;
+              return msg;
+            })
             : data[0].message;
 
         throw Error(message);
@@ -102,7 +102,7 @@ const AuthProvider: FC<IAuthProvider> = (props) => {
     localStorage.clear();
     sessionStorage.clear();
     setState(undefined);
-    navigate("/", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (

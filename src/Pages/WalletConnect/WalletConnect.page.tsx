@@ -29,7 +29,7 @@ const WalletConnectPage = () => {
 
     const web3Modal = new Web3Modal({
       network:
-        process.env.NODE_ENV === Environments.PROD
+        process.env.REACT_APP_ENV === Environments.PROD
           ? Networks.MAINNET
           : Networks.RINKEBY,
       cacheProvider: false,

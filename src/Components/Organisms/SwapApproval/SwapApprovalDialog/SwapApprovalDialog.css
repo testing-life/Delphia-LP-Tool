@@ -4,7 +4,7 @@
   }
 
   .swapApprovalDialog__contentWrapper {
-    margin-top: 11rem;
+    margin-top: 8rem;
     @apply relative mx-auto z-10;
   }
 

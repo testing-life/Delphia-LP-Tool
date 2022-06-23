@@ -3,6 +3,7 @@ import { BigNumber, ethers } from "ethers";
 import React from "react";
 import { AsyncDialogProps } from "react-dialog-async";
 import ReactTooltip from "react-tooltip";
+import { trim } from "../../../../Utils/strings";
 import Button from "../../../Atoms/Button/Button";
 import Card from "../../../Atoms/Card/Card";
 import IconButton from "../../../Atoms/IconButton/IconButton";
@@ -13,6 +14,7 @@ interface SwapApprovalDialogProps {
   token?: string;
   otherToken?: string;
   gasEstimate: BigNumber;
+  usdPrice: string
 }
 
 const ConfirmationDialog: React.FC<
@@ -35,7 +37,7 @@ const ConfirmationDialog: React.FC<
                 </h2>
                 <IconButton
                   onClick={() => handleClose()}
-                  classes="ml-auto -mr-12 -mt-8"
+                  classes="ml-auto -mr-8 -mt-8"
                 >
                   <XIcon className="w-8 h-8 " />
                 </IconButton>
@@ -56,7 +58,8 @@ const ConfirmationDialog: React.FC<
                   ></SwapSummaryItem>
                   <SwapSummaryItem
                     label="Estimated Gas Fee"
-                    value={`${ethers.utils.formatEther(data.gasEstimate)}`}
+                    value={`${trim(ethers.utils.formatEther(data.gasEstimate))}`}
+                    dollarCost={data.usdPrice}
                   >
                     <>
                       <QuestionMarkCircleIcon

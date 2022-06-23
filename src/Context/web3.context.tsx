@@ -16,6 +16,10 @@ import {
   TransactionResponse,
 } from "@ethersproject/providers";
 import { ITxValues } from "../Components/Swap/Swap";
+import { BigNumber as BN } from "bignumber.js";
+import { RequestUrl } from "../Consts/requestUrls";
+import { NetworkDictionary, NetworkIds, Networks } from "../Enums/networks";
+import { Environments } from "../Enums/environments";
 
 export type TWeb3Context = {
   currentAddress: string | undefined;
@@ -26,7 +30,8 @@ export type TWeb3Context = {
   error: Error | undefined | string;
   accounts: string[] | undefined;
   balances: TBalances[] | undefined;
-  pending: TransactionResponse[];
+  pending: NamedTransactionResponse[];
+  isAllowed: boolean;
   removeFromPending: (receipt: TransactionReceipt) => void;
   addToPending: (tx: NamedTransactionResponse) => void;
   getBalances: (arg: string) => void;
@@ -48,6 +53,7 @@ export type TWeb3Context = {
     abi: any
   ) => Promise<TransactionResponse>;
   setCurrentAddress: (arg: string | undefined) => void;
+  toUSD: (arg: any) => any
 };
 
 interface IWeb3Provider {
@@ -75,6 +81,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const [signer, setSigner] = useState<any | undefined>(undefined);
   const [balances, setBalances] = useState<TBalances[] | undefined>(undefined);
   const [error, setError] = useState<Error | string>();
+  const [isAllowed, setIsAllowed] = useState<boolean>(false);
   const [currentAddress, setCurrentAddress] = useState<string | undefined>(
     undefined
   );
@@ -88,26 +95,57 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
       provider.provider.on("accountsChanged", accountsChangeHandler);
 
       // Subscribe to chainId change
-      provider.provider.on("chainChanged", (chainId: any) => {
-        console.log(`chainId`, chainId);
-      });
-
-      // Subscribe to networkId change
-      provider.provider.on("networkChanged", (networkId: any) => {
-        console.log(`networkId`, networkId);
-      });
-
-      listAccounts();
+      provider.provider.on("chainChanged", networkChangeHandler);
+      getInitialNetwork()
     }
   }, [provider]);
 
+  useEffect(() => {
+    if (!error && currentAddress) {
+      isWhiteListed(currentAddress);
+    }
+  }, [currentAddress])
+
   const accountsChangeHandler = async (accounts: string[]) => {
+    if (!accounts.length) {
+      setIsAllowed(true);
+    }
+    await isWhiteListed(accounts[0]);
     setAccounts(accounts);
   };
 
-  const listAccounts = async (): Promise<void> => {
-    const newAccounts = await provider.listAccounts();
-    setAccounts(newAccounts);
+  const getInitialNetwork = async () => {
+    const network = await provider.getNetwork().catch((e: any) => console.log(`network id error`, e));
+    let id = (NetworkDictionary as any)[network.chainId] || NetworkDictionary.na;
+
+    if (id) {
+      networkChangeHandler(id);
+    }
+  }
+
+  const networkChangeHandler = async (networkId: NetworkIds) => {
+    if (networkId !== NetworkIds.RINKEBY_ID && networkId !== NetworkIds.MAINNET_ID) {
+      setError(`Wrong Network. Please connect either to ${Networks.MAINNET} or ${Networks.RINKEBY}`);
+      return;
+    }
+    if (process.env.REACT_APP_ENV === Environments.PROD && networkId !== NetworkIds.MAINNET_ID) {
+      setError(`Wrong Network. Please connect to ${Networks.MAINNET}`);
+      return;
+    }
+    if (process.env.REACT_APP_ENV === Environments.DEV && networkId !== NetworkIds.RINKEBY_ID) {
+      setError(`Wrong Network. Please connect to ${Networks.RINKEBY}`);
+      return;
+    }
+    setError(undefined)
+  };
+
+  const isWhiteListed = async (address: string): Promise<void> => {
+    if (!address) {
+      return;
+    }
+    const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, provider.getSigner());
+    const res = await contract.isInWhitelist(address).catch((e: Error) => console.log(`e`, e));
+    setIsAllowed(res)
   };
 
   const balanceOfABI = [
@@ -154,7 +192,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         const newBalances = [
           ...res,
           { ETH: ethers.utils.formatEther(ethBalance) },
-        ];
+        ].filter(item => !!item);
         setBalances(newBalances as TBalances[]);
       }
     });
@@ -176,7 +214,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
   const getApprovalEstimate = async (): Promise<BigNumber> => {
     const contract = new ethers.Contract(TokenAddresses.SEC, SECabi, signer);
     const gas = await gasPrice();
-    const amount = 2 ** 255;
+    const initAmount = BigInt(2 ** 255);
+    const amount = BigNumber.from(initAmount);
     const gasEstimate = await contract.estimateGas.approve(
       TokenAddresses.CRD,
       amount
@@ -188,6 +227,22 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
       throw new Error("Cannot get Approval gas estimate");
     }
   };
+
+  const getEthPrice = async () => {
+    return await fetch(RequestUrl.ETH_TO_USD);
+  }
+
+  const toUSD = async (tokens: BigNumber): Promise<string> => {
+    const res = await getEthPrice().catch(e => console.log(`e`, e))
+    let usdPrice = null;
+    if (res) {
+      const data = await res.json();
+      const string = ethers.utils.formatEther(tokens);
+      const bn = new BN(string);
+      usdPrice = bn.multipliedBy(data['ethereum'].usd)
+    }
+    return usdPrice ? usdPrice.toFormat(2) : '0';
+  }
 
   const getSwapCostEstimate = async (
     source: TTokens,
@@ -242,7 +297,8 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
     abi: any
   ): Promise<TransactionResponse> => {
     const contract = new ethers.Contract(source, abi, signer);
-    const amount = 2 ** 255;
+    const initAmount = BigInt(2 ** 255);
+    const amount = BigNumber.from(initAmount);
     return await contract.approve(spender, amount);
   };
 
@@ -272,6 +328,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         accounts,
         balances,
         pending,
+        isAllowed,
         swap,
         getBalances,
         estimateTokenGain,
@@ -283,6 +340,7 @@ const Web3Provider: FC<IWeb3Provider> = (props) => {
         addToPending,
         removeFromPending,
         setCurrentAddress,
+        toUSD
       }}
       {...props}
     />

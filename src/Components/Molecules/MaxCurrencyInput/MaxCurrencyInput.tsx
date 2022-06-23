@@ -28,7 +28,7 @@ const MaxCurrencyInput: FC<MaxCurrencyInputProps> = ({
   }, [state]);
 
   useEffect(() => {
-    if (value && state !== value) {
+    if ((value || value === '') && state !== value) {
       validateInput(value);
     }
   }, [value]);

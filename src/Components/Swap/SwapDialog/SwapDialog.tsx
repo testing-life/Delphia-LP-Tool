@@ -8,6 +8,7 @@ import React from "react";
 import { AsyncDialogProps } from "react-dialog-async";
 import ReactTooltip from "react-tooltip";
 import { Actions } from "../../../Enums/actions";
+import { trim } from "../../../Utils/strings";
 import Button from "../../Atoms/Button/Button";
 import Card from "../../Atoms/Card/Card";
 import IconButton from "../../Atoms/IconButton/IconButton";
@@ -22,9 +23,10 @@ interface SwapSummaryDialogProps {
   to?: string;
   txValues: ITxValues;
   action: Actions;
-  priceEstimate?: string;
+  currentPrice?: string;
   gainEstimate?: string;
   gasFeeEstimate?: BigNumber;
+  usdPrice: string
 }
 
 const ConfirmationDialog: React.FC<
@@ -34,7 +36,6 @@ const ConfirmationDialog: React.FC<
     <>
       {open && (
         <div className={"absolute inset-0 flex items-start justify-center"}>
-          {console.log(`object`, data)}
           <div
             className={"absolute w-full h-full bg-black bg-opacity-70"}
             onClick={() => handleClose()}
@@ -57,7 +58,7 @@ const ConfirmationDialog: React.FC<
                     caption={data.from as string}
                   />
                   <span className="text-2xl font-medium ">
-                    {data.txValues.fromValueFormatted}
+                    {trim(data.txValues.fromValueFormatted as string)}
                   </span>
                 </div>
               </Card>
@@ -69,7 +70,7 @@ const ConfirmationDialog: React.FC<
                     caption={data.to as string}
                   />
                   <span className="text-2xl font-medium">
-                    {data.txValues.toValueFormatted}
+                    {trim(data.txValues.toValueFormatted as string)}
                   </span>
                 </div>
               </Card>
@@ -82,7 +83,7 @@ const ConfirmationDialog: React.FC<
                     label="Action"
                     value={data.action}
                   ></SwapSummaryItem>
-                  <SwapSummaryItem label={`${data.to} price`} value={"0.fixME"}>
+                  <SwapSummaryItem label={`${data.to} price`} value={trim(data.currentPrice as string) as string}>
                     <>
                       <QuestionMarkCircleIcon
                         className="w-6 h-6 text-gray-400 ml-2"
@@ -106,10 +107,10 @@ const ConfirmationDialog: React.FC<
                   <SwapSummaryItem
                     label={`You receive`}
                     value={
-                      data.gainEstimate ||
-                      ethers.utils.formatEther(
+                      trim(data.gainEstimate as string) ||
+                      trim(ethers.utils.formatEther(
                         data.txValues.toValue as BigNumber
-                      )
+                      ))
                     }
                   >
                     <>
@@ -131,9 +132,10 @@ const ConfirmationDialog: React.FC<
                   </SwapSummaryItem>
                   <SwapSummaryItem
                     label="Estimated Gas Fee"
-                    value={`${ethers.utils.formatEther(
+                    value={`${trim(ethers.utils.formatEther(
                       data.gasFeeEstimate as BigNumber
-                    )}`}
+                    ))}`}
+                    dollarCost={data.usdPrice}
                   >
                     <>
                       <QuestionMarkCircleIcon

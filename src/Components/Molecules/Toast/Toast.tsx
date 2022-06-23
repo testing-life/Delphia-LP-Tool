@@ -13,20 +13,19 @@ export interface ToastProps {
 const Toast: FC<ToastProps> = ({
   variant,
   message,
-  etherscanUrl = "",
+  etherscanUrl,
   onClose,
 }) => {
   console.log(`variant`, variant);
   return (
     <div
-      className={`toast ${
-        variant === "success" ? "toast--success" : "toast--error"
-      }`}
+      className={`toast ${variant === "success" ? "toast--success" : "toast--error"
+        }`}
     >
       <InformationCircleIcon className="toast__infoIcon" />
       <div className="toast__messageWrapper">
         {message}
-        <a
+        {etherscanUrl && <a
           target="_blank"
           rel="noreferrer noopener"
           className="flex"
@@ -36,7 +35,7 @@ const Toast: FC<ToastProps> = ({
             View on Etherscan
           </span>
           <ExternalLinkIcon className="w-6 h-6 text-blue-600 ml-2" />
-        </a>
+        </a>}
       </div>
       <IconButton onClick={onClose} classes="ml-auto -mr-4 -mt-4">
         <XIcon className="w-6 h-6 " />

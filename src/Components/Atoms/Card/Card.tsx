@@ -5,14 +5,14 @@ export interface CardProps {
   children: ReactNode;
   variant?: "grey";
   classes?: string;
+  size?: 'sm' | 'lg';
 }
 
-const Card: FC<CardProps> = ({ children, variant, classes }) => {
+const Card: FC<CardProps> = ({ children, variant, classes, size }) => {
   return (
     <div
-      className={`card ${variant === "grey" ? "card--grey" : ""} ${
-        classes ? classes : ""
-      }`}
+      className={`card ${size} ${variant === "grey" ? "card--grey" : ""} ${classes ? classes : ""
+        }`}
     >
       {children}
     </div>

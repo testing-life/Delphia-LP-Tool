@@ -27,7 +27,7 @@ const Button: FC<ButtonProps> = ({
 }) => (
   <button
     disabled={disabled}
-    className={`btn ${classes} ${variant} ${size} ${fullWidth ? "w-full" : ""}`}
+    className={`btn ${classes} ${variant} ${size} ${loading ? '--isLoading' : ''} ${fullWidth ? "w-full" : ""}`}
     type={type}
     onClick={onClick}
   >

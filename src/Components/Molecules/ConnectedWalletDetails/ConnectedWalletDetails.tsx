@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { TBalances, TTokens } from "../../../Context/web3.context";
+import { trim } from "../../../Utils/strings";
 import "./ConnectedWalletDetails.css";
 
 export interface ConnectedWalletDetailsProps {
@@ -15,9 +16,8 @@ const ConnectedWalletDetails: FC<ConnectedWalletDetailsProps> = ({
 }) => {
   return (
     <div
-      className={`connectedWalletDetails ${
-        error ? "connectedWalletDetails--hasError" : ""
-      }`}
+      className={`connectedWalletDetails ${error ? "connectedWalletDetails--hasError" : ""
+        }`}
     >
       {!error &&
         balances &&
@@ -25,7 +25,7 @@ const ConnectedWalletDetails: FC<ConnectedWalletDetailsProps> = ({
           const key = Object.keys(balance)[0];
           return (
             <span className="connectedWalletDetails__tokenDetails">
-              {key} {balance[key as TTokens]}
+              {key} {trim(balance[key as TTokens])}
             </span>
           );
         })}

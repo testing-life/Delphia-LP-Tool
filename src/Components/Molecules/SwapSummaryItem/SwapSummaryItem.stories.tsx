@@ -43,12 +43,12 @@ const TemplateTooltip: Story<SwapSummaryItemProps> = (args) => (
 
 export const SwapSummaryItemWithoutTooltips = Template.bind({});
 SwapSummaryItemWithoutTooltips.args = {
-  label: "Current CRD Price",
+  label: "CRD Price",
   value: "0.15 SEC",
 };
 
 export const SwapSummaryItemWithTooltips = TemplateTooltip.bind({});
 SwapSummaryItemWithTooltips.args = {
-  label: "Current CRD Price",
+  label: "CRD Price",
   value: "0.15 SEC",
 };

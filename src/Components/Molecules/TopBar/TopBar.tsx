@@ -11,6 +11,8 @@ import Navigation from "../../Organisms/Navigation/Navigation";
 import ConnectedWalletDetails from "../ConnectedWalletDetails/ConnectedWalletDetails";
 import TransactionStatusLink from "../TransactionStatusLink/TransactionStatusLink";
 import PendingDialog from "./PendingDialog/PendingDialog";
+import delphiaLogo from '../../../Assets/delphiaLogo.svg'
+
 interface TopBarProps {
   currentAddress: string;
   accounts: string[];
@@ -19,7 +21,7 @@ interface TopBarProps {
 const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
   const { logout } = useAuth();
   const pendingDialog = useDialog(PendingDialog);
-  const { provider, balances, getBalances, pending } = useEthProvider();
+  const { provider, balances, getBalances, pending, error } = useEthProvider();
   const [isShown, setIsShown] = useState<boolean>(false);
   const reconnect = async () => {
     try {
@@ -34,7 +36,9 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
   };
 
   useEffect(() => {
-    getBalances(currentAddress);
+    if (!error) {
+      getBalances(currentAddress);
+    }
   }, [currentAddress]);
 
   return (
@@ -43,7 +47,7 @@ const TopBar: FC<TopBarProps> = ({ currentAddress, addressError }) => {
         leftAligned={
           <AvatarLink
             path="/"
-            imgSrc="https://duckduckgo.com/assets/icons/meta/DDG-icon_256x256.png"
+            imgSrc={delphiaLogo}
           />
         }
         rightAligned={
