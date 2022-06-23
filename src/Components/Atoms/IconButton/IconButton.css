@@ -1,0 +1,5 @@
+@layer components {
+  .iconButton {
+    @apply flex justify-center items-center w-11 h-11 rounded-lg p-2 hover:cursor-pointer focus:ring-blue-200 focus:ring-2;
+  }
+}

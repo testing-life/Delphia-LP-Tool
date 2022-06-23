@@ -1,0 +1,10 @@
+@layer components {
+  .swapApproval {
+  }
+  .heading {
+    @apply text-2xl font-semibold mb-5;
+  }
+  .para {
+    @apply text-base font-normal mb-12;
+  }
+}

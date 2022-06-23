@@ -1,0 +1,27 @@
+@layer components {
+  .walletConnectPage {
+    @apply bg-gray-800 flex h-screen justify-center items-start pt-28;
+  }
+
+  .web3modal-modal-hitbox {
+    pointer-events: none;
+  }
+  .web3modal-modal-lightbox {
+    background: transparent;
+  }
+
+  .web3modal-modal-card {
+    @apply min-w-xl;
+  }
+
+  .web3modal-modal-card:before {
+    content: "Select a Wallet";
+    @apply text-3xl font-semibold text-gray-900 mb-10 text-center pt-6;
+    display: block;
+    width: 100%;
+  }
+
+  .walletconnect-modal__close__wrapper {
+    display: none;
+  }
+}

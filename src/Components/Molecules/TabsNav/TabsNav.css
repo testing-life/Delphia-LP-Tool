@@ -1,0 +1,5 @@
+@layer components {
+  .tabsNav {
+    @apply bg-white rounded-xl border border-gray-300 p-2 mb-10 ml-auto mr-auto inline-flex gap-4;
+  }
+}

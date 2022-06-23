@@ -1,38 +1,65 @@
-import React, { FC } from "react";
-import { AuthContext, useAuth } from "../../Context/auth.context";
-import Button from "../Atoms/Button";
-import Form from "../Atoms/Form";
-import InputField from "../Atoms/Input";
+import React, { ChangeEvent, FC, FormEvent, useState } from "react";
+import { useAuth } from "../../Context/auth.context";
+import Button from "../Atoms/Button/Button";
+import Form from "../Atoms/Form/Form";
+import InputField from "../Atoms/Input/Input";
+import isEmail from "validator/lib/isEmail";
 
 const LoginForm: FC<any> = () => {
-  const { login } = useAuth() as AuthContext;
+  const [credentials, setCredentials] = useState<{
+    [key: string]: string;
+  }>({});
+  const { login } = useAuth();
+  const [emailError, setEmailError] = useState<string | undefined>(undefined)
 
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-    console.log(`args`, e);
-    login();
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const isValid =
+      Object.keys(credentials).includes("email") &&
+      Object.keys(credentials).includes("password") &&
+      credentials.email.length &&
+      credentials.password.length &&
+      isEmail(credentials.email);
+    if (isValid) {
+      login(credentials);
+    }
   };
 
-  const onChange = (args: any) => {
-    console.log(`args`, args);
+  const onEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEmailError(undefined);
+    if (event.target.value && !isEmail(event.target.value)) {
+      setEmailError('Please enter a valid email address')
+    }
+    setCredentials({ ...credentials, email: event.target.value });
+  };
+
+
+  const onPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setCredentials({ ...credentials, password: event.target.value });
   };
 
   return (
     <div className="max-w-lg mx-auto">
-      <Form submitHandler={(e) => onSubmit(e)}>
+      <Form onSubmit={onSubmit}>
         <ul>
           <li className="mb-6">
-            <InputField changeHandler={(e) => onChange(e)} type="text">
+            <InputField name="email" onChange={onEmailChange} type="text" error={emailError}>
               Email
             </InputField>
           </li>
-          <li className="mb-6">
-            <InputField changeHandler={(e) => onChange(e)} type="text">
+          <li className="mb-14">
+            <InputField
+              name="password"
+              onChange={onPasswordChange}
+              type="password"
+            >
               Password
             </InputField>
           </li>
           <li className="text-sm">
-            <Button type="submit">Log in</Button>
+            <Button variant="primary" fullWidth type="submit">
+              Log in
+            </Button>
           </li>
         </ul>
       </Form>

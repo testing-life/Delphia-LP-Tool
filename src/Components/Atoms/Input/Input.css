@@ -1,0 +1,39 @@
+@layer components {
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .input__field {
+    @apply bg-white border py-2.5 px-5 hover:border-blue-500 placeholder-gray-500 border-gray-500 text-gray-900 sm:text-sm rounded-lg focus:border-blue-500 focus:ring-blue-200 focus:ring-2 focus-within:outline-none block w-full;
+  }
+
+  .input__field[disabled] {
+    @apply bg-gray-50 border-gray-300 cursor-default hover:border placeholder-gray-400;
+  }
+
+  .input__label {
+    @apply text-sm font-medium  text-gray-900 block mb-2;
+  }
+
+  .input__validation--error {
+    @apply text-red-500;
+  }
+
+  .input__validation--error .input__field {
+    @apply border-red-500 text-red-500 border-2 bg-red-50 placeholder-red-300 focus:ring-red-200 focus:ring-2;
+  }
+
+  .input__validation {
+    @apply text-sm inline-flex  mb-2 items-center;
+  }
+
+  .input__validation--error .input__field:focus-visible {
+    outline: none;
+  }
+}

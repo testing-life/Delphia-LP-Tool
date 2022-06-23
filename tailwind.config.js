@@ -3,6 +3,9 @@ module.exports = {
   darkMode: "media", // or 'media' or 'class'
   theme: {
     extend: {
+      fontFamily: {
+        inter: ["Inter", "ui-sans-serif"],
+      },
       colors: {
         turquoise: "#40e0d0",
         yellow: {
@@ -10,6 +13,9 @@ module.exports = {
           400: "#e1ad01",
           700: "#b48a01",
         },
+      },
+      minWidth: {
+        xl: "36rem",
       },
     },
   },
@@ -19,6 +25,8 @@ module.exports = {
       disabled: ["hover"],
       backgroundColor: ["active"],
       textColor: ["active"],
+      borderWidth: ["hover", "focus"],
+      ringWidth: ["hover"],
     },
   },
   plugins: [],

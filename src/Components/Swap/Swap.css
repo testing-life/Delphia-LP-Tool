@@ -1,0 +1,11 @@
+@layer components {
+  .swapDialog {
+    @apply w-36 h-32 bg-gray-500 block;
+  }
+  .swap .swapInput {
+    @apply mb-2;
+  }
+  .swap .swapSummary {
+    @apply mt-5;
+  }
+}
