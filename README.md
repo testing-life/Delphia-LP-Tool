@@ -50,3 +50,29 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Features
+
+Login with user validation
+![image](https://user-images.githubusercontent.com/85691163/187612182-20003f65-52be-4e62-b55b-ab581da1027d.png)
+
+Connecting a Metamask wallet
+![image](https://user-images.githubusercontent.com/85691163/187612462-f6b31597-15c3-426b-a05b-7a201086d29e.png)
+
+Displaying various token balances
+![image](https://user-images.githubusercontent.com/85691163/187612675-a42b20d5-ed69-4188-b098-de1c5c8f0c7d.png)
+
+Displaying pending transactions
+![image](https://user-images.githubusercontent.com/85691163/187612758-2366e297-48ff-4206-b111-2d2f9725c230.png)
+
+Handling incorrect wallets
+![image](https://user-images.githubusercontent.com/85691163/187612818-200d693b-af1d-472e-b57a-4f40d8368aeb.png)
+
+Swapping tokens with all related calculations (gas, etc...)
+![image](https://user-images.githubusercontent.com/85691163/187612931-c7bbf2d9-932e-466d-abab-447d4e5647ad.png)
+![image](https://user-images.githubusercontent.com/85691163/187612976-027819f3-902b-4c01-acdc-b315a1e9889e.png)
+
+
+
+
+
